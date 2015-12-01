@@ -1,0 +1,46 @@
+{
+  "name": "object-path-immutable",
+  "version": "0.1.0",
+  "description": "Modify deep object properties without modifying the original object (immutability). Works great with React and Redux.",
+  "author": "Mario Casciaro <mariocasciaro@gmail.com>",
+  "homepage": "https://github.com/mariocasciaro/object-path-immutable",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mariocasciaro/object-path-immutable.git"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test.js --report html -- -R spec"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.4.1",
+    "mocha": "^2.3.4",
+    "mocha-lcov-reporter": "^1.0.0"
+  },
+  "keywords": [
+    "deep",
+    "path",
+    "access",
+    "get",
+    "property",
+    "dot",
+    "prop",
+    "object",
+    "obj",
+    "notation",
+    "segment",
+    "value",
+    "nested",
+    "key",
+    "immutable",
+    "immutability",
+    "react",
+    "redux",
+    "state"
+  ]
+}
