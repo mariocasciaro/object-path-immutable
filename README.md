@@ -125,7 +125,7 @@ var newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
 //var obj = {
 //  a: {
 //    b: 'f',
-//    c: ['f'],
+//    c: ['d, 'f'],
 //    g: 'h'
 //  }
 //}
