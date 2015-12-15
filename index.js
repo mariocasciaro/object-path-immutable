@@ -152,5 +152,21 @@
     })
   }
   
+  objectPathImmutable.assign = function(obj, path, source) {
+    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+      source = Object(source);
+      var target = clone(clonedObj[finalPath], true)
+
+      for (var key in source) {
+        if (_hasOwnProperty.call(source, key)) {
+          target[key] = source[key]
+        }
+      }
+
+      clonedObj[finalPath] = target
+      return clonedObj
+    })
+  }
+  
   return objectPathImmutable
 })

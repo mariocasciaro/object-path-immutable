@@ -131,3 +131,56 @@ describe('del', function() {
     expect(newObj.a).to.be.eql([])
   })
 })
+
+describe('assign', function() {
+  it('should assign an object without modifying the original object', function() {
+    var obj = {
+      a: {
+        b: 1
+      },
+      c: {
+        d: 2
+      }
+    }
+    
+    var newObj = op.assign(obj, 'a', { b: 3 })
+    
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({b: 1})
+    expect(newObj.c).to.be.equal(obj.c)
+    
+    expect(newObj.a.b).to.be.equal(3)
+  })
+
+  it('should keep existing fields that are not overwritten', function() {
+    var obj = {
+      a: {
+        b: 1
+      }
+    }
+    
+    var newObj = op.assign(obj, 'a', { c: 2 })
+    
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({b: 1})
+    expect(newObj.a).to.be.eql({ b: 1, c: 2 })
+  })
+  
+  it('should create intermediate objects', function() {
+    var obj = {
+      a: {},
+      c: {
+        d: 2
+      }
+    }
+    
+    var newObj = op.assign(obj, 'a.b', { f: 'a' })
+    
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({})
+    expect(newObj.a).to.be.eql({b: {f: 'a'}})
+  })
+})

@@ -119,6 +119,17 @@ var newObj = immutable.del(obj, 'a.c.0')
 //  }
 //}
 
+//shallow copy properties
+var newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
+//returns
+//var obj = {
+//  a: {
+//    b: 'f',
+//    c: ['d, 'f'],
+//    g: 'h'
+//  }
+//}
+
 //Chaining mode. value() at the end of the chain is used to retrieve the resulting object
 var newObj = immutable(obj).set(obj, 'a.b', 'f').del(obj, 'a.c.0').value()
 
