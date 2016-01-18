@@ -57,7 +57,7 @@
       /*istanbul ignore else*/
       if (typeof objectPathImmutable[prop] === 'function') {
         proxy[prop] = function() {
-          var args = Array.prototype.slice.call(arguments).concat([obj])
+          var args = [obj].concat(Array.prototype.slice.call(arguments))
           return objectPathImmutable(objectPathImmutable[prop].apply(objectPathImmutable, args))
         }
       }

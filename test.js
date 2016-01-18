@@ -184,3 +184,25 @@ describe('assign', function() {
     expect(newObj.a).to.be.eql({b: {f: 'a'}})
   })
 })
+
+
+describe('bind', function() {
+  it('should execute all methods on the bound object', function() {
+    var obj = {
+      a: {
+        d: 1,
+        f: 2
+      },
+      c: {}
+    }
+
+    var newObj = op(obj).set('a.q', 'q').del('a.d').value()
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(newObj.c).to.be.equal(obj.c)
+
+    expect(newObj.a).to.be.eql({f: 2, q: 'q'})
+  })
+})
+
