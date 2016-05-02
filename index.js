@@ -136,6 +136,19 @@
       return clonedObj
     })
   }
+
+  objectPathImmutable.insert = function (obj, path, value, at) {
+    at = ~~at;
+    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+      var arr = clonedObj[finalPath];
+      if (!isArray(arr))
+        arr = [];
+      var first = arr.slice(0, at)
+      first.push(value)
+      clonedObj[finalPath] = first.concat(arr.slice(at))
+      return clonedObj
+    })
+  } 
   
   objectPathImmutable.del = function (obj, path, value, at){
     return changeImmutable(obj, path, function(clonedObj, finalPath) {

@@ -63,6 +63,79 @@ describe('set', function() {
   })
 })
 
+describe('insert', function(){
+  it('should insert value into existing array without modifying the object', function(){
+    var obj = {
+      a: ['a'],
+      c: {}
+    }
+    
+    var newObj = op.insert(obj, 'a', 'b', 0)
+    
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(newObj.c).to.be.equal(obj.c)
+    
+    expect(newObj.a).to.be.eql(['b', 'a'])
+  });
+
+  it('should create intermediary array', function(){
+    var obj = {
+      a: [],
+      c: {}
+    }
+    
+    var newObj = op.insert(obj, 'a.0.1', 'b')
+    
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(newObj.c).to.be.equal(obj.c)
+    
+    expect(newObj.a).to.be.eql([[, ['b']]])
+  })
+
+  it('should insert in another index', function(){
+    var obj = {
+    a: 'b',
+    b: {
+      c: [],
+      d: ['a', 'b'],
+      e: [{},{f: 'g'}],
+      f: 'i'
+    }
+  }
+
+    var newObj = op.insert(obj, 'b.d', 'asdf', 1)
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.b.d).to.be.eql(['a', 'asdf', 'b'])
+  });
+
+  it('should handle sparse array', function(){
+    var obj = {
+    a: 'b',
+    b: {
+      c: [],
+      d: ['a', 'b'],
+      e: [{},{f: 'g'}],
+      f: 'i'
+    }
+  }
+    obj.b.d = new Array(4)
+    obj.b.d[0] = 'a'
+    obj.b.d[1] = 'b'
+
+    var newObj = op.insert(obj, 'b.d', 'asdf', 3)
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.b.d).to.be.eql([
+      'a',
+      'b',
+      ,
+      'asdf'
+      ,
+    ])
+  })
+})
 
 describe('push', function() {
   it('should push values without modifying the object', function() {
