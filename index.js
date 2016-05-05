@@ -141,8 +141,12 @@
     at = ~~at;
     return changeImmutable(obj, path, function(clonedObj, finalPath) {
       var arr = clonedObj[finalPath];
-      if (!isArray(arr))
+      if (!isArray(arr)) {
+        if (arr != null && typeof arr !== 'undefined')
+          throw new Error('Expected ' + path + 'to be an array. Instead got ' + typeof path);
         arr = [];
+      }
+        
       var first = arr.slice(0, at)
       first.push(value)
       clonedObj[finalPath] = first.concat(arr.slice(at))
