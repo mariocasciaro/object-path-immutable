@@ -135,6 +135,13 @@ describe('insert', function(){
       ,
     ])
   })
+
+  it('should throw if asked to insert into something other than an array',
+    function(){
+      expect(function(){
+        op.insert({ foo: 'bar' }, 'foo', 'baz');
+      }).to.throw();
+    })
 })
 
 describe('push', function() {
