@@ -321,6 +321,25 @@ describe('assign', function() {
       fiz: 'biz'
     }])
   })
+
+  it('does not assign inherited properties', function() {
+    var base = {
+      fiz: 'biz'
+    }
+
+    var source = Object.create(base)
+    source.frob = 'nard'
+
+    var obj = {
+      foo: {}
+    }
+
+    expect(op.assign(obj, 'foo', source)).to.deep.equal({
+      foo: {
+        frob: 'nard'
+      }
+    })
+  })
 })
 
 
