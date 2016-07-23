@@ -67,6 +67,10 @@ describe('set', function() {
 
     expect(op.set(obj, '', 'yo')).to.be.equal(obj)
   })
+
+  it('should set at a numeric path', function() {
+    expect(op.set([], 0, 'yo')).to.deep.equal(['yo'])
+  })
 })
 
 describe('insert', function(){
@@ -154,6 +158,10 @@ describe('insert', function(){
 
     expect(op.insert(obj, '')).to.be.equal(obj)
   })
+
+  it('should insert at a numeric path', function() {
+    expect(op.insert([[23, 42]], 0, 'yo', 1)).to.deep.equal([[23, 'yo', 42]])
+  })
 })
 
 describe('push', function() {
@@ -191,6 +199,10 @@ describe('push', function() {
     var obj = {};
 
     expect(op.push(obj, '', 'yo')).to.be.equal(obj)
+  })
+
+  it('should push at a numeric path', function() {
+    expect(op.insert([[]], 0, 'yo')).to.deep.equal([['yo']])
   })
 })
 
@@ -233,6 +245,10 @@ describe('del', function() {
     var obj = {};
 
     expect(op.del(obj, '')).to.be.equal(obj)
+  })
+
+  it('should del at a numeric path', function() {
+    expect(op.del([23, 'yo', 42], 1)).to.deep.equal([23, 42])
   })
 })
 
@@ -292,6 +308,18 @@ describe('assign', function() {
     var obj = {};
 
     expect(op.assign(obj, '', {})).to.be.equal(obj)
+  })
+
+  it('should assign at a numeric path', function() {
+    expect(op.assign([{
+      foo: 'bar'
+    }], 0, {
+      foo: 'baz',
+      fiz: 'biz'
+    })).to.deep.equal([{
+      foo: 'baz',
+      fiz: 'biz'
+    }])
   })
 })
 
