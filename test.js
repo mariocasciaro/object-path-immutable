@@ -61,6 +61,12 @@ describe('set', function() {
     expect(obj.a).to.be.eql({})
     expect(newObj.a).to.be.eql({b: [, {f: 'a'}]})
   })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.set(obj, '', 'yo')).to.be.equal(obj)
+  })
 })
 
 describe('insert', function(){
@@ -142,6 +148,12 @@ describe('insert', function(){
         op.insert({ foo: 'bar' }, 'foo', 'baz');
       }).to.throw();
     })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.insert(obj, '')).to.be.equal(obj)
+  })
 })
 
 describe('push', function() {
@@ -173,6 +185,12 @@ describe('push', function() {
     expect(newObj.c).to.be.equal(obj.c)
     
     expect(newObj.a).to.be.eql([[, ['b']]])
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.push(obj, '', 'yo')).to.be.equal(obj)
   })
 })
 
@@ -209,6 +227,12 @@ describe('del', function() {
     expect(newObj.c).to.be.equal(obj.c)
     
     expect(newObj.a).to.be.eql([])
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.del(obj, '')).to.be.equal(obj)
   })
 })
 
@@ -262,6 +286,12 @@ describe('assign', function() {
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(obj.a).to.be.eql({})
     expect(newObj.a).to.be.eql({b: {f: 'a'}})
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.assign(obj, '', {})).to.be.equal(obj)
   })
 })
 
