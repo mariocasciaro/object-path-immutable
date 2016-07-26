@@ -52,24 +52,35 @@
     return key;
   }
   
-  var objectPathImmutable = function(obj) {
-    var newOp = Object.keys(objectPathImmutable).reduce(function(proxy, prop) {
+  var objectPathImmutable = function(src) {
+    var dest = src
+    var committed = false
+
+    var transaction = Object.keys(api).reduce(function(proxy, prop) {
       /*istanbul ignore else*/
-      if (typeof objectPathImmutable[prop] === 'function') {
+      if (typeof api[prop] === 'function') {
         proxy[prop] = function() {
-          var args = [obj].concat(Array.prototype.slice.call(arguments))
-          return objectPathImmutable(objectPathImmutable[prop].apply(objectPathImmutable, args))
+          var args = [dest, src].concat(Array.prototype.slice.call(arguments))
+
+          if (committed) {
+            throw new Error('Cannot call ' + prop + ' after `value`')
+          }
+
+          dest = api[prop].apply(null, args)
+
+          return transaction
         }
       }
       
       return proxy;
     }, {})
     
-    newOp.value = function() {
-      return obj
+    transaction.value = function() {
+      committed = true
+      return dest
     }
     
-    return newOp
+    return transaction
   };
   
   function clone(obj, createIfEmpty, assumeArray) {
@@ -98,36 +109,46 @@
   }
   
   
-  function changeImmutable(obj, path, changeCallback) {
+  function changeImmutable(dest, src, path, changeCallback) {
     if (isNumber(path)) {
       path = [path]
     }
     if (isEmpty(path)) {
-      return obj;
+      return src;
     }
     if (isString(path)) {
-      return changeImmutable(obj, path.split('.').map(getKey), changeCallback);
+      return changeImmutable(dest, src, path.split('.').map(getKey), changeCallback);
     }
     var currentPath = path[0]
-    var clonedObj = clone(obj, true, isNumber(currentPath))
+
+    if (!dest || dest === src) {
+      dest = clone(src, true, isNumber(currentPath))
+    }
+
     if (path.length === 1) {
-      return changeCallback(clonedObj, currentPath)
+      return changeCallback(dest, currentPath)
     }
   
-    clonedObj[currentPath] = changeImmutable(clonedObj[currentPath], path.slice(1), changeCallback)
-    return clonedObj
+    if (src != null) {
+      src = src[currentPath]
+    }
+
+    dest[currentPath] = changeImmutable(dest[currentPath], src, path.slice(1), changeCallback)
+
+    return dest
   }
   
-  objectPathImmutable.set = function(obj, path, value) {
-    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+  var api = {}
+  api.set = function set(dest, src, path, value) {
+    return changeImmutable(dest, src, path, function(clonedObj, finalPath) {
       clonedObj[finalPath] = value
       return clonedObj
     })
   }
-  
-  objectPathImmutable.push = function (obj, path /*, values */) {
-    var values = Array.prototype.slice.call(arguments, 2)
-    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+
+  api.push = function push(dest, src, path /*, values */) {
+    var values = Array.prototype.slice.call(arguments, 3)
+    return changeImmutable(dest, src, path, function(clonedObj, finalPath) {
       if (!isArray(clonedObj[finalPath])) {
         clonedObj[finalPath] = values
       } else {
@@ -137,9 +158,9 @@
     })
   }
 
-  objectPathImmutable.insert = function (obj, path, value, at) {
+  api.insert = function insert(dest, src, path, value, at) {
     at = ~~at;
-    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+    return changeImmutable(dest, src, path, function(clonedObj, finalPath) {
       var arr = clonedObj[finalPath];
       if (!isArray(arr)) {
         if (arr != null && typeof arr !== 'undefined')
@@ -152,10 +173,10 @@
       clonedObj[finalPath] = first.concat(arr.slice(at))
       return clonedObj
     })
-  } 
+  }
   
-  objectPathImmutable.del = function (obj, path, value, at){
-    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+  api.del = function del(dest, src, path, value, at){
+    return changeImmutable(dest, src, path, function(clonedObj, finalPath) {
       if(Array.isArray(clonedObj)) {
         if(clonedObj[finalPath]) {
           clonedObj.splice(finalPath, 1)
@@ -168,9 +189,9 @@
       return clonedObj
     })
   }
-  
-  objectPathImmutable.assign = function(obj, path, source) {
-    return changeImmutable(obj, path, function(clonedObj, finalPath) {
+
+  api.assign = function assign(dest, src, path, source) {
+    return changeImmutable(dest, src, path, function(clonedObj, finalPath) {
       source = Object(source);
       var target = clone(clonedObj[finalPath], true)
 
@@ -185,5 +206,9 @@
     })
   }
   
-  return objectPathImmutable
+  return Object.keys(api).reduce(function(objectPathImmutable, method) {
+    objectPathImmutable[method] = api[method].bind(null, null);
+
+    return objectPathImmutable;
+  }, objectPathImmutable)
 })

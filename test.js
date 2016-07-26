@@ -277,5 +277,43 @@ describe('bind', function() {
 
     expect(newObj.a).to.be.eql({f: 2, q: 'q'})
   })
+
+  it('should return the bound object if no operations made', function() {
+    var obj = {};
+
+    expect(op(obj).value()).to.be.equal(obj)
+  })
+
+  it('should throw if an operation is attempted after `value` called', function (){
+    var transaction = op({
+      foo: 'bar',
+      fiz: [],
+      frob: {}
+    });
+
+    transaction.value();
+
+    expect(function (){
+      transaction.set('foo', 'baz')
+    }).to.throw()
+
+    expect(function (){
+      transaction.push('fiz', 'biz')
+    }).to.throw()
+
+    expect(function (){
+      transaction.insert('fiz', 'biz', 23)
+    }).to.throw()
+
+    expect(function (){
+      transaction.del('foo')
+    }).to.throw()
+
+    expect(function (){
+      transaction.assign('frob', {
+        nard: 23
+      })
+    }).to.throw()
+  })
 })
 
