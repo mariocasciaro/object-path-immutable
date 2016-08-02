@@ -131,7 +131,7 @@ var newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
 //}
 
 //Chaining mode. value() at the end of the chain is used to retrieve the resulting object
-var newObj = immutable(obj).set(obj, 'a.b', 'f').del(obj, 'a.c.0').value()
+var newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
 
 ```
 
