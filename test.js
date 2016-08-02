@@ -61,6 +61,16 @@ describe('set', function() {
     expect(obj.a).to.be.eql({})
     expect(newObj.a).to.be.eql({b: [, {f: 'a'}]})
   })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.set(obj, '', 'yo')).to.be.equal(obj)
+  })
+
+  it('should set at a numeric path', function() {
+    expect(op.set([], 0, 'yo')).to.deep.equal(['yo'])
+  })
 })
 
 describe('insert', function(){
@@ -135,6 +145,23 @@ describe('insert', function(){
       ,
     ])
   })
+
+  it('should throw if asked to insert into something other than an array',
+    function(){
+      expect(function(){
+        op.insert({ foo: 'bar' }, 'foo', 'baz');
+      }).to.throw();
+    })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.insert(obj, '')).to.be.equal(obj)
+  })
+
+  it('should insert at a numeric path', function() {
+    expect(op.insert([[23, 42]], 0, 'yo', 1)).to.deep.equal([[23, 'yo', 42]])
+  })
 })
 
 describe('push', function() {
@@ -166,6 +193,16 @@ describe('push', function() {
     expect(newObj.c).to.be.equal(obj.c)
     
     expect(newObj.a).to.be.eql([[, ['b']]])
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.push(obj, '', 'yo')).to.be.equal(obj)
+  })
+
+  it('should push at a numeric path', function() {
+    expect(op.insert([[]], 0, 'yo')).to.deep.equal([['yo']])
   })
 })
 
@@ -202,6 +239,16 @@ describe('del', function() {
     expect(newObj.c).to.be.equal(obj.c)
     
     expect(newObj.a).to.be.eql([])
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.del(obj, '')).to.be.equal(obj)
+  })
+
+  it('should del at a numeric path', function() {
+    expect(op.del([23, 'yo', 42], 1)).to.deep.equal([23, 42])
   })
 })
 
@@ -255,6 +302,43 @@ describe('assign', function() {
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(obj.a).to.be.eql({})
     expect(newObj.a).to.be.eql({b: {f: 'a'}})
+  })
+
+  it('should return the original object if passed an empty path', function() {
+    var obj = {};
+
+    expect(op.assign(obj, '', {})).to.be.equal(obj)
+  })
+
+  it('should assign at a numeric path', function() {
+    expect(op.assign([{
+      foo: 'bar'
+    }], 0, {
+      foo: 'baz',
+      fiz: 'biz'
+    })).to.deep.equal([{
+      foo: 'baz',
+      fiz: 'biz'
+    }])
+  })
+
+  it('does not assign inherited properties', function() {
+    var base = {
+      fiz: 'biz'
+    }
+
+    var source = Object.create(base)
+    source.frob = 'nard'
+
+    var obj = {
+      foo: {}
+    }
+
+    expect(op.assign(obj, 'foo', source)).to.deep.equal({
+      foo: {
+        frob: 'nard'
+      }
+    })
   })
 })
 
