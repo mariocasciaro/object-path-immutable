@@ -12,15 +12,18 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test.js --report html -- -R spec"
+    "pretest": "standard",
+    "test": "istanbul cover _mocha test.js --report html -- -R spec",
+    "prepublish": "npm run test"
   },
   "dependencies": {},
   "devDependencies": {
-    "chai": "^3.4.1",
-    "coveralls": "^2.11.4",
-    "istanbul": "^0.4.1",
-    "mocha": "^2.3.4",
-    "mocha-lcov-reporter": "^1.0.0"
+    "chai": "^3.5.0",
+    "coveralls": "^2.11.14",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.1",
+    "mocha-lcov-reporter": "^1.2.0",
+    "standard": "^8.3.0"
   },
   "keywords": [
     "deep",
