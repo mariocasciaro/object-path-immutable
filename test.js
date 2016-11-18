@@ -245,8 +245,8 @@ describe('del', function () {
     expect(op.del([23, 'yo', 42], 1)).to.deep.equal([23, 42])
   })
 
-  it('should delete falsy value', function() {
-    expect(op.del(['',false], 1)).to.deep.equal([''])
+  it('should delete falsy value', function () {
+    expect(op.del(['', false], 1)).to.deep.equal([''])
   })
 })
 
