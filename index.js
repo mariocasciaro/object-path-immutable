@@ -180,7 +180,7 @@
   api.del = function del (dest, src, path, value, at) {
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       if (Array.isArray(clonedObj)) {
-        if (clonedObj[finalPath]) {
+        if (clonedObj[finalPath] !== undefined) {
           clonedObj.splice(finalPath, 1)
         }
       } else {
