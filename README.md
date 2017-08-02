@@ -130,6 +130,16 @@ var newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
 //  }
 //}
 
+//insert property at specific index
+var newObj = immutable.insert(obj, 'a.c', 'k', 1)
+//returns
+//var obj = {
+//  a: {
+//    b: 'c',
+//    c: ['d, 'k' 'f'],
+//  }
+//}
+
 //Chaining mode. value() at the end of the chain is used to retrieve the resulting object
 var newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
 
