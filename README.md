@@ -1,24 +1,20 @@
+[![build](https://img.shields.io/travis/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://travis-ci.org/mariocasciaro/object-path-immutable)
+[![coverage](https://img.shields.io/coveralls/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://coveralls.io/r/mariocasciaro/object-path-immutable)
+[![downloads](https://img.shields.io/npm/dm/object-path-immutable.svg?style=flat-square)](https://www.npmjs.com/package/object-path-immutable)
+[![version](https://img.shields.io/npm/v/object-path-immutable.svg?style=flat-square)](https://www.npmjs.com/package/object-path-immutable)
+[![devdeps](https://img.shields.io/david/dev/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://david-dm.org/mariocasciaro/object-path-immutable#info=devDependencies)
+
 object-path-immutable
 ===========
 
-Tiny JS library to modify deep object properties without modifying the original object (immutability). 
+Tiny JS library to modify deep object properties without modifying the original object (immutability).
 Works great with React (especially when using `setState()`) and Redux (inside a reducer).
 
-This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*
-
-[![NPM version](https://badge.fury.io/js/object-path-immutable.png)](http://badge.fury.io/js/object-path-immutable)
-[![Build Status](https://travis-ci.org/mariocasciaro/object-path-immutable.png)](https://travis-ci.org/mariocasciaro/object-path-immutable)
-[![Coverage Status](https://coveralls.io/repos/mariocasciaro/object-path-immutable/badge.png)](https://coveralls.io/r/mariocasciaro/object-path-immutable)
-[![devDependency Status](https://david-dm.org/mariocasciaro/object-path-immutable/dev-status.svg)](https://david-dm.org/mariocasciaro/object-path-immutable#info=devDependencies)
-![Downloads](http://img.shields.io/npm/dm/object-path-immutable.svg)
+This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*.
 
 ## Install
 
-### Node.js
-
-```
-npm install object-path-immutable --save
-```
+    npm install object-path-immutable --save
 
 ## Quick usage
 
@@ -27,115 +23,136 @@ It will minimize the number of clones down the line. The resulting object is jus
 so be warned that it will not be protected against property mutations (like `Immutable.js`)
 
 ```javascript
-var obj = {
+const obj = {
   a: {
     b: 'c',
     c: ['d', 'f']
   }
 }
 
-//set a deep property
-var newObj = immutable.set(obj, 'a.b', 'f')
-//returns
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['d', 'f']
-//  }
-//}
+const newObj = immutable.set(obj, 'a.b', 'f')
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f']
+//   }
+// }
 
-//obj !== newObj
-//obj.a !== newObj.a
-//obj.b !== newObj.b
+// obj !== newObj
+// obj.a !== newObj.a
+// obj.b !== newObj.b
 
-//However:
-//obj.c === newObj.c
+// However:
+// obj.c === newObj.c
 ```
 
+Note that you can also chain the api's and call `value()` at the end to retrieve the resulting object.
+
+```javascript
+const newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
+```
 
 ## API
 
 ```javascript
+// Premises
 
-var obj = {
+const obj = {
   a: {
     b: 'c',
     c: ['d', 'f']
   }
 }
 
-var immutable = require("object-path-immutable")
-
-//set deep property
-var newObj = immutable.set(obj, 'a.b', 'f')
-//returns
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['d', 'f']
-//  }
-//}
-
-//it can also use an array to describe the path
-var newObj = immutable.set(obj, ['a', 'b'], 'f')
-
-//if the path is specified as a string, then numbers are automatically interpreted as array indexes
-var newObj = immutable.set(obj, 'a.c.1', 'fooo')
-//returns
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['d', 'fooo']
-//  }
-//}
-
-
-//push into a deep array (it will create intermediate objects/arrays if necessary)
-var newObj = immutable.push(obj, 'a.d', 'f')
-//returns
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['d', 'f'],
-//    d: ['f']
-//  }
-//}
-
-//delete a deep property
-var newObj = immutable.del(obj, 'a.c')
-//returns
-//var obj = {
-//  a: {
-//    b: 'f'
-//  }
-//}
-
-//delete a deep array item (splice)
-var newObj = immutable.del(obj, 'a.c.0')
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['f']
-//  }
-//}
-
-//shallow copy properties
-var newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
-//returns
-//var obj = {
-//  a: {
-//    b: 'f',
-//    c: ['d, 'f'],
-//    g: 'h'
-//  }
-//}
-
-//Chaining mode. value() at the end of the chain is used to retrieve the resulting object
-var newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
-
+import immutable from 'object-path-immutable'
 ```
 
-## Equivalent library with side effects
+#### set (initialObject, path, value)
+
+Changes an object property.
+
+- Path can be either a string or an array.
+- The value can be a function, allowing you to get the initial value of the property to do an update.
+
+```javascript
+const newObj1 = immutable.set(obj, 'a.b', 'f')
+const newObj2 = immutable.set(obj, ['a', 'b'], 'f')
+const newObj3 = immutable.set(obj, ['a', 'b'], v => 'f')
+
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f']
+//   }
+// }
+
+// Note that if the path is specified as a string, numbers are automatically interpreted as array indexes.
+
+const newObj = immutable.set(obj, 'a.c.1', 'fooo')
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'fooo']
+//   }
+// }
+```
+
+#### push (initialObject, path, value)
+
+Push into a deep array (it will create intermediate objects/arrays if necessary).
+
+```javascript
+const newObj = immutable.push(obj, 'a.d', 'f')
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f'],
+//     d: ['f']
+//   }
+// }
+```
+
+#### delete (initialObject, path)
+
+Deletes a property.
+
+```javascript
+const newObj = immutable.del(obj, 'a.c')
+// {
+//   a: {
+//     b: 'f'
+//   }
+// }
+```
+
+Can also delete a deep array item using splice
+
+```javascript
+const newObj = immutable.del(obj, 'a.c.0')
+// {
+//   a: {
+//     b: 'f',
+//     c: ['f']
+//   }
+// }
+```
+
+##### assign (initialObject, path, payload)
+
+Shallow copy properties.
+
+```javascript
+const newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d, 'f'],
+//     g: 'h'
+//   }
+// }
+```
+
+### Equivalent library with side effects
 
 [object-path](https://github.com/mariocasciaro/object-path)
 
