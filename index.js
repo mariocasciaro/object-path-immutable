@@ -142,7 +142,7 @@
   var api = {}
   api.set = function set (dest, src, path, value) {
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-      clonedObj[finalPath] = typeof value === 'function' ? value(clonedObj[finalPath]) : value
+      clonedObj[finalPath] = value
       return clonedObj
     })
   }
