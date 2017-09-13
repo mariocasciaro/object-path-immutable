@@ -107,7 +107,7 @@ const obj = {
   },
 }
 
-const newObj = immutable.set(obj, ['a', 'b'], v => v + 1)
+const newObj = immutable.update(obj, ['a', 'b'], v => v + 1)
 
 // {
 //   a: {
