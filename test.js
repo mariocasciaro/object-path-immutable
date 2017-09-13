@@ -373,7 +373,9 @@ describe('bind', function () {
       c: {}
     }
 
-    var newObj = op(obj).set('a.q', 'q').del('a.d').update('a.f', v => v + 1).value()
+    var newObj = op(obj).set('a.q', 'q').del('a.d').update('a.f', function (v) {
+      return v + 1
+    }).value()
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
@@ -414,7 +416,9 @@ describe('bind', function () {
     }).to.throw()
 
     expect(function () {
-      transaction.update('foo', v => v + 'bar')
+      transaction.update('foo', function (v) {
+        return v + 'bar'
+      })
     }).to.throw()
 
     expect(function () {
