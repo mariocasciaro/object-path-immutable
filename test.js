@@ -373,13 +373,13 @@ describe('bind', function () {
       c: {}
     }
 
-    var newObj = op(obj).set('a.q', 'q').del('a.d').value()
+    var newObj = op(obj).set('a.q', 'q').del('a.d').update('a.f', v => v + 1).value()
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(newObj.c).to.be.equal(obj.c)
 
-    expect(newObj.a).to.be.eql({f: 2, q: 'q'})
+    expect(newObj.a).to.be.eql({f: 3, q: 'q'})
   })
 
   it('should return the bound object if no operations made', function () {
@@ -411,6 +411,10 @@ describe('bind', function () {
 
     expect(function () {
       transaction.del('foo')
+    }).to.throw()
+
+    expect(function () {
+      transaction.update('foo', v => v + 'bar')
     }).to.throw()
 
     expect(function () {
