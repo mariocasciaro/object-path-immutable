@@ -72,6 +72,29 @@ describe('set', function () {
   it('should set at a numeric path', function () {
     expect(op.set([], 0, 'yo')).to.deep.equal(['yo'])
   })
+
+  it('should update a deep key', function () {
+    var obj = {
+      a: {
+        b: 1
+      },
+      c: {
+        d: 2
+      }
+    }
+
+    var newObj = op.update(obj, 'a.b', function (value) {
+      return value + 1
+    })
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({b: 1})
+    // this should be the same
+    expect(newObj.c).to.be.equal(obj.c)
+
+    expect(newObj.a.b).to.be.equal(2)
+  })
 })
 
 describe('insert', function () {
@@ -350,13 +373,15 @@ describe('bind', function () {
       c: {}
     }
 
-    var newObj = op(obj).set('a.q', 'q').del('a.d').value()
+    var newObj = op(obj).set('a.q', 'q').del('a.d').update('a.f', function (v) {
+      return v + 1
+    }).value()
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(newObj.c).to.be.equal(obj.c)
 
-    expect(newObj.a).to.be.eql({f: 2, q: 'q'})
+    expect(newObj.a).to.be.eql({f: 3, q: 'q'})
   })
 
   it('should return the bound object if no operations made', function () {
@@ -388,6 +413,13 @@ describe('bind', function () {
 
     expect(function () {
       transaction.del('foo')
+    }).to.throw()
+
+    expect(function () {
+      /* istanbul ignore next */
+      transaction.update('foo', function (v) {
+        return v + 'bar'
+      })
     }).to.throw()
 
     expect(function () {

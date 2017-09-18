@@ -147,6 +147,13 @@
     })
   }
 
+  api.update = function update (dest, src, path, updater) {
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      clonedObj[finalPath] = updater(clonedObj[finalPath])
+      return clonedObj
+    })
+  }
+
   api.push = function push (dest, src, path /*, values */) {
     var values = Array.prototype.slice.call(arguments, 3)
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {

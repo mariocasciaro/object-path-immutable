@@ -18,8 +18,8 @@ This can be seen as a simpler and more intuitive alternative to the *React Immut
 
 ## Quick usage
 
-The following, sets a property without modifying the original object. 
-It will minimize the number of clones down the line. The resulting object is just a plain JS object literal, 
+The following, sets a property without modifying the original object.
+It will minimize the number of clones down the line. The resulting object is just a plain JS object literal,
 so be warned that it will not be protected against property mutations (like `Immutable.js`)
 
 ```javascript
@@ -72,7 +72,6 @@ import immutable from 'object-path-immutable'
 Changes an object property.
 
 - Path can be either a string or an array.
-- The value can be a function, allowing you to get the initial value of the property to do an update.
 
 ```javascript
 const newObj1 = immutable.set(obj, 'a.b', 'f')
@@ -93,6 +92,26 @@ const newObj = immutable.set(obj, 'a.c.1', 'fooo')
 //   a: {
 //     b: 'f',
 //     c: ['d', 'fooo']
+//   }
+// }
+```
+
+#### update (initialObject, path, updater)
+
+Updates an object property.
+
+```javascript
+const obj = {
+  a: {
+    b: 1,
+  },
+}
+
+const newObj = immutable.update(obj, ['a', 'b'], v => v + 1)
+
+// {
+//   a: {
+//     b: 2,
 //   }
 // }
 ```
