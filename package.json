@@ -1,6 +1,6 @@
 {
   "name": "object-path-immutable",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Modify deep object properties without modifying the original object (immutability). Works great with React and Redux.",
   "author": "Mario Casciaro <mariocasciaro@gmail.com>",
   "homepage": "https://github.com/mariocasciaro/object-path-immutable",
