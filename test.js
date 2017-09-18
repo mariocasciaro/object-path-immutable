@@ -416,6 +416,7 @@ describe('bind', function () {
     }).to.throw()
 
     expect(function () {
+      /* istanbul ignore next */
       transaction.update('foo', function (v) {
         return v + 'bar'
       })
