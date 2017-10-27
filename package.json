@@ -16,7 +16,9 @@
     "test": "istanbul cover _mocha test.js --report html -- -R spec",
     "prepublish": "npm run test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "seamless-immutable": "^7.1.2"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "coveralls": "^2.11.14",

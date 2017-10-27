@@ -4,6 +4,7 @@
 
 var expect = require('chai').expect
 var op = require('./index.js')
+const Immutable = require('seamless-immutable')
 
 describe('set', function () {
   it('should set a deep key without modifying the original object', function () {
@@ -94,6 +95,37 @@ describe('set', function () {
     expect(newObj.c).to.be.equal(obj.c)
 
     expect(newObj.a.b).to.be.equal(2)
+  })
+
+  it('should should replace contents of an array inside an object', function () {
+    var obj = {
+      foo: {
+        bar: [
+          {
+            baz: 'fou',
+            biz: 'bar'
+          }, {
+            baz: 'foo',
+            biz: 'bar'
+          }
+        ]
+      }
+    }
+    var immutableObj = Immutable(obj)
+    var newObj = op.set(immutableObj, 'foo.bar.0.baz', 'foo')
+    expect(newObj).to.be.equal(Immutable({
+      foo: {
+        bar: [
+          {
+            baz: 'foo',
+            biz: 'bar'
+          }, {
+            baz: 'foo',
+            biz: 'bar'
+          }
+        ]
+      }
+    }))
   })
 })
 
