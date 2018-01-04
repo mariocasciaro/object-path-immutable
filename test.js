@@ -63,10 +63,10 @@ describe('set', function () {
     expect(newObj.a).to.be.eql({b: [, {f: 'a'}]}) // eslint-disable-line no-sparse-arrays
   })
 
-  it('should return the original object if passed an empty path', function () {
+  it('should return the input value if passed an empty path', function () {
     var obj = {}
 
-    expect(op.set(obj, '', 'yo')).to.be.equal(obj)
+    expect(op.set(obj, '', 'yo')).to.be.equal('yo')
   })
 
   it('should set at a numeric path', function () {
@@ -167,11 +167,11 @@ describe('insert', function () {
   it('should throw if asked to insert into something other than an array',
     function () {
       expect(function () {
-        op.insert({ foo: 'bar' }, 'foo', 'baz')
+        op.insert({foo: 'bar'}, 'foo', 'baz')
       }).to.throw()
     })
 
-  it('should return the original object if passed an empty path', function () {
+  it('should return the original object if passed an empty path and empty value', function () {
     var obj = {}
 
     expect(op.insert(obj, '')).to.be.equal(obj)
@@ -213,10 +213,10 @@ describe('push', function () {
     expect(newObj.a).to.be.eql([[, ['b']]]) // eslint-disable-line no-sparse-arrays
   })
 
-  it('should return the original object if passed an empty path', function () {
+  it('should push into the cloned original object if passed an empty path', function () {
     var obj = {}
 
-    expect(op.push(obj, '', 'yo')).to.be.equal(obj)
+    expect(op.push(obj, '', 'yo')).to.deep.equal(['yo'])
   })
 
   it('should push at a numeric path', function () {
@@ -258,10 +258,10 @@ describe('del', function () {
     expect(newObj.a).to.be.eql([])
   })
 
-  it('should return the original object if passed an empty path', function () {
+  it('should return undefined if passed an empty path', function () {
     var obj = {}
 
-    expect(op.del(obj, '')).to.be.equal(obj)
+    expect(op.del(obj, '')).to.be.equal(undefined)
   })
 
   it('should del at a numeric path', function () {
@@ -284,7 +284,7 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a', { b: 3 })
+    var newObj = op.assign(obj, 'a', {b: 3})
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
@@ -301,12 +301,12 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a', { c: 2 })
+    var newObj = op.assign(obj, 'a', {c: 2})
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(obj.a).to.be.eql({b: 1})
-    expect(newObj.a).to.be.eql({ b: 1, c: 2 })
+    expect(newObj.a).to.be.eql({b: 1, c: 2})
   })
 
   it('should create intermediate objects', function () {
@@ -317,7 +317,7 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a.b', { f: 'a' })
+    var newObj = op.assign(obj, 'a.b', {f: 'a'})
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
@@ -325,7 +325,7 @@ describe('assign', function () {
     expect(newObj.a).to.be.eql({b: {f: 'a'}})
   })
 
-  it('should return the original object if passed an empty path', function () {
+  it('should return the original object if passed an empty path and an empty value to assign', function () {
     var obj = {}
 
     expect(op.assign(obj, '', {})).to.be.equal(obj)
