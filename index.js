@@ -18,6 +18,9 @@
   var _hasOwnProperty = Object.prototype.hasOwnProperty
 
   function isEmpty (value) {
+    if (isNumber(value)) {
+      return false
+    }
     if (!value) {
       return true
     }
@@ -141,6 +144,9 @@
 
   var api = {}
   api.set = function set (dest, src, path, value) {
+    if (isEmpty(path)) {
+      return value
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       clonedObj[finalPath] = value
       return clonedObj
@@ -148,6 +154,9 @@
   }
 
   api.update = function update (dest, src, path, updater) {
+    if (isEmpty(path)) {
+      return updater(clone(src))
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       clonedObj[finalPath] = updater(clonedObj[finalPath])
       return clonedObj
@@ -156,6 +165,13 @@
 
   api.push = function push (dest, src, path /*, values */) {
     var values = Array.prototype.slice.call(arguments, 3)
+    if (isEmpty(path)) {
+      if (!isArray(src)) {
+        return values
+      } else {
+        return src.concat(values)
+      }
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       if (!isArray(clonedObj[finalPath])) {
         clonedObj[finalPath] = values
@@ -168,6 +184,14 @@
 
   api.insert = function insert (dest, src, path, value, at) {
     at = ~~at
+    if (isEmpty(path)) {
+      if (isEmpty(value)) {
+        return src
+      }
+      var first = src.slice(0, at)
+      first.push(value)
+      return first.concat(src.slice(at))
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       var arr = clonedObj[finalPath]
       if (!isArray(arr)) {
@@ -185,6 +209,9 @@
   }
 
   api.del = function del (dest, src, path, value, at) {
+    if (isEmpty(path)) {
+      return undefined
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       if (Array.isArray(clonedObj)) {
         if (clonedObj[finalPath] !== undefined) {
@@ -200,6 +227,12 @@
   }
 
   api.assign = function assign (dest, src, path, source) {
+    if (isEmpty(path)) {
+      if (isEmpty(source)) {
+        return src
+      }
+      return Object.assign({}, src, source)
+    }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       source = Object(source)
       var target = clone(clonedObj[finalPath], true)
