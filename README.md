@@ -13,9 +13,16 @@ Works great with React (especially when using `setState()`) and Redux (inside a 
 This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*.
 
 ## Changelog
+
 ### 1.0
-- **Breaking change**: The way the library handles empty paths has changed. Before this change,all the methods were returning the original object. The new behavior is as follows:
-  -  
+
+- **Breaking change**: The way the library handles empty paths has changed. Before this change,all the methods were returning the original object. The new behavior is as follows.
+  -  `set(src, path, value)`: `value` is returned
+  -  `update(src, path, updater)`: `value` will be passed to `updater()` and the result returned
+  -  `set(src, path, ...values)`: `values` will be concatenated to `src` if `src` is an array, otherwise `values` will be returned 
+  -  `insert(src, path, value, at)`: if `src` is an array then it will be cloned and `value` will be inserted at `at`, otherwise `[value]` will be returned
+  - `del(src, path)`: returns `undefined`
+  - `assign(src, path, target)`: Target is assigned to a clone of `src` and returned
 
 ## Install
 
