@@ -12,6 +12,11 @@ Works great with React (especially when using `setState()`) and Redux (inside a 
 
 This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*.
 
+## Changelog
+### 1.0
+- **Breaking change**: The way the library handles empty paths has changed. Before this change,all the methods were returning the original object. The new behavior is as follows:
+  -  
+
 ## Install
 
     npm install object-path-immutable --save

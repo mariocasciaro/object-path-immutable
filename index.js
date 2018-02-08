@@ -49,6 +49,15 @@
     return Array.isArray(obj)
   }
 
+  function assignToObj (target, source) {
+    for (var key in source) {
+      if (_hasOwnProperty.call(source, key)) {
+        target[key] = source[key]
+      }
+    }
+    return target
+  }
+
   function getKey (key) {
     var intKey = parseInt(key)
     if (intKey.toString() === key) {
@@ -103,14 +112,7 @@
       return obj.slice()
     }
 
-    var res = {}
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        res[key] = obj[key]
-      }
-    }
-
-    return res
+    return assignToObj({}, obj)
   }
 
   function changeImmutable (dest, src, path, changeCallback) {
@@ -185,9 +187,10 @@
   api.insert = function insert (dest, src, path, value, at) {
     at = ~~at
     if (isEmpty(path)) {
-      if (isEmpty(value)) {
-        return src
+      if (!isArray(src)) {
+        return [value]
       }
+
       var first = src.slice(0, at)
       first.push(value)
       return first.concat(src.slice(at))
@@ -208,9 +211,9 @@
     })
   }
 
-  api.del = function del (dest, src, path, value, at) {
+  api.del = function del (dest, src, path) {
     if (isEmpty(path)) {
-      return undefined
+      return void 0
     }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       if (Array.isArray(clonedObj)) {
@@ -231,17 +234,12 @@
       if (isEmpty(source)) {
         return src
       }
-      return Object.assign({}, src, source)
+      return assignToObj(clone(src), source)
     }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       source = Object(source)
       var target = clone(clonedObj[finalPath], true)
-
-      for (var key in source) {
-        if (_hasOwnProperty.call(source, key)) {
-          target[key] = source[key]
-        }
-      }
+      assignToObj(target, source)
 
       clonedObj[finalPath] = target
       return clonedObj

@@ -72,7 +72,9 @@ describe('set', function () {
   it('should set at a numeric path', function () {
     expect(op.set([], 0, 'yo')).to.deep.equal(['yo'])
   })
+})
 
+describe('update', function () {
   it('should update a deep key', function () {
     var obj = {
       a: {
@@ -94,6 +96,30 @@ describe('set', function () {
     expect(newObj.c).to.be.equal(obj.c)
 
     expect(newObj.a.b).to.be.equal(2)
+  })
+
+  it('should work on empty path', function () {
+    var obj = {
+      a: {
+        b: 1
+      },
+      c: {
+        d: 2
+      }
+    }
+
+    var newObj = op.update(obj, [], function (value) {
+      value.e = 3
+      return value
+    })
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({b: 1})
+    // this should be the same
+    expect(newObj.c).to.be.equal(obj.c)
+    expect(newObj.a.b).to.be.equal(1)
+    expect(newObj.e).to.be.equal(3)
   })
 })
 
@@ -171,10 +197,16 @@ describe('insert', function () {
       }).to.throw()
     })
 
-  it('should return the original object if passed an empty path and empty value', function () {
+  it('should return an array with an undefined value if passed an empty path and empty value and src is not an array', function () {
     var obj = {}
 
-    expect(op.insert(obj, '')).to.be.equal(obj)
+    expect(op.insert(obj, '')).to.be.deep.equal([void 0])
+  })
+
+  it('should insert the value in src if passed an empty path', function () {
+    var obj = ['a', 'b', 'c']
+
+    expect(op.insert(obj, '', 'd', 1)).to.be.deep.equal(['a', 'd', 'b', 'c'])
   })
 
   it('should insert at a numeric path', function () {
@@ -214,13 +246,19 @@ describe('push', function () {
   })
 
   it('should push into the cloned original object if passed an empty path', function () {
+    var obj = ['yoo']
+
+    expect(op.push(obj, '', 'yo')).to.deep.equal(['yoo', 'yo'])
+  })
+
+  it('returns new array if passed an empty path and src is not an array', function () {
     var obj = {}
 
     expect(op.push(obj, '', 'yo')).to.deep.equal(['yo'])
   })
 
   it('should push at a numeric path', function () {
-    expect(op.insert([[]], 0, 'yo')).to.deep.equal([['yo']])
+    expect(op.push([[]], 0, 'yo')).to.deep.equal([['yo']])
   })
 })
 
