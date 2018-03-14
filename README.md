@@ -88,7 +88,6 @@ Changes an object property.
 ```javascript
 const newObj1 = immutable.set(obj, 'a.b', 'f')
 const newObj2 = immutable.set(obj, ['a', 'b'], 'f')
-const newObj3 = immutable.set(obj, ['a', 'b'], v => 'f')
 
 // {
 //   a: {
