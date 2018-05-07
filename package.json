@@ -16,6 +16,7 @@
     "test": "istanbul cover _mocha test.js --report html -- -R spec",
     "prepublish": "npm run test"
   },
+  "types": "./object-path-immutable.d.ts",
   "dependencies": {},
   "devDependencies": {
     "chai": "^3.5.0",
