@@ -8,6 +8,7 @@
     "type": "git",
     "url": "git://github.com/mariocasciaro/object-path-immutable.git"
   },
+  "types": "./object-path-immutable.d.ts",
   "engines": {
     "node": ">=0.10.0"
   },
