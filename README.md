@@ -17,6 +17,15 @@ This can be seen as a simpler and more intuitive alternative to the *React Immut
 
 [View Changelog](CHANGELOG.md)
 
+## Webpack bug in `deepmerge`
+Webpack 3 and 4 have a bug that breaks bundling.
+If you see the Error: `deepmerge is not a function`, add this alias to your Webpack config:
+```
+alias: {
+	deepmerge$: path.resolve(__dirname, 'node_modules/deepmerge/dist/umd.js'),
+}
+```
+
 ## Install
 
     npm install object-path-immutable --save
