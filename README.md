@@ -201,7 +201,7 @@ for the details.
 const newObj = immutable.merge(obj, 'a.c', {b: 'd'})
 ```
 
-### Equivalent library with side effects
+## Equivalent library with side effects
 
 [object-path](https://github.com/mariocasciaro/object-path)
 
