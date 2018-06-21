@@ -14,15 +14,7 @@ This can be seen as a simpler and more intuitive alternative to the *React Immut
 
 ## Changelog
 
-### 1.0
-
-- **Breaking change**: The way the library handles empty paths has changed. Before this change,all the methods were returning the original object. The new behavior is as follows.
-  -  `set(src, path, value)`: `value` is returned
-  -  `update(src, path, updater)`: `value` will be passed to `updater()` and the result returned
-  -  `set(src, path, ...values)`: `values` will be concatenated to `src` if `src` is an array, otherwise `values` will be returned
-  -  `insert(src, path, value, at)`: if `src` is an array then it will be cloned and `value` will be inserted at `at`, otherwise `[value]` will be returned
-  - `del(src, path)`: returns `undefined`
-  - `assign(src, path, target)`: Target is assigned to a clone of `src` and returned
+[View Changelog](CHANGELOG.md)
 
 ## Install
 
@@ -114,8 +106,8 @@ Updates an object property.
 ```javascript
 const obj = {
   a: {
-    b: 1,
-  },
+    b: 1
+  }
 }
 
 const newObj = immutable.update(obj, ['a', 'b'], v => v + 1)
@@ -167,7 +159,7 @@ const newObj = immutable.del(obj, 'a.c.0')
 // }
 ```
 
-##### assign (initialObject, path, payload)
+#### assign (initialObject, path, payload)
 
 Shallow copy properties.
 
@@ -182,7 +174,7 @@ const newObj = immutable.assign(obj, 'a', { b: 'f', g: 'h' })
 // }
 ```
 
-##### insert (initialObject, path, payload, position)
+#### insert (initialObject, path, payload, position)
 
 Insert property at the specific array index.
 
@@ -196,10 +188,20 @@ const newObj = immutable.insert(obj, 'a.c', 'k', 1)
 // }
 ```
 
+
+#### merge (initialObject, path, value, options)
+
+Deep merge properties. Uses the `deepmarge` package. 
+One thing to notice is that `object-path-immutable` overwrites arrays by default 
+instead of concatenating them. You can change this behavior by passing the `arrayMerge` 
+option to `merge`. Please refer to the [deepmerge documentation](https://github.com/KyleAMathews/deepmerge) 
+for the details.
+
+```javascript
+const newObj = immutable.merge(obj, 'a.c', {b: 'd'})
+```
+
 ### Equivalent library with side effects
 
 [object-path](https://github.com/mariocasciaro/object-path)
 
-### Credits
-
-* [Mario Casciaro](https://github.com/mariocasciaro) - Author

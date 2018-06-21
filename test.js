@@ -3,7 +3,7 @@
 'use strict'
 
 var expect = require('chai').expect
-var op = require('./index.js')
+var op = require('./')
 
 describe('set', function () {
   it('should set a deep key without modifying the original object', function () {
@@ -397,6 +397,90 @@ describe('assign', function () {
       foo: {
         frob: 'nard'
       }
+    })
+  })
+})
+
+describe('merge', function () {
+  it('should merge an object without modifying the original object', function () {
+    var obj = {
+      a: {
+        b: 1
+      },
+      c: {
+        d: 2
+      }
+    }
+
+    var newObj = op.merge(obj, 'a', {b: 3})
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a).to.be.eql({b: 1})
+    expect(newObj.c).to.be.equal(obj.c)
+
+    expect(newObj.a.b).to.be.equal(3)
+  })
+
+  it('should properly merge objects', function () {
+    var obj = {
+      a: {
+        b: 1,
+        c: {
+          d: 2,
+          e: 3
+        }
+      }
+    }
+
+    var newObj = op.merge(obj, 'a', {c: {e: 4}})
+
+    expect(newObj).not.to.be.equal(obj)
+    expect(newObj.a).not.to.be.equal(obj.a)
+    expect(obj.a.b).to.be.eql(1)
+    expect(newObj.a.c).to.be.eql({
+      d: 2,
+      e: 4
+    })
+  })
+
+  it('should not merge arrays by default', function () {
+    var obj = {
+      a: {
+        b: 1,
+        c: {
+          d: 2,
+          e: [1]
+        }
+      }
+    }
+
+    var newObj = op.merge(obj, 'a', {c: {e: [2]}})
+
+    expect(obj.a.b).to.be.eql(1)
+    expect(newObj.a.c).to.be.eql({
+      d: 2,
+      e: [2]
+    })
+  })
+
+  it('should not merge objects without a path', function () {
+    var obj = {
+      a: {
+        b: 1,
+        c: {
+          d: 2,
+          e: [1]
+        }
+      }
+    }
+
+    var newObj = op.merge(obj, null, {a: {c: {e: [2]}}})
+
+    expect(obj.a.b).to.be.eql(1)
+    expect(newObj.a.c).to.be.eql({
+      d: 2,
+      e: [2]
     })
   })
 })
