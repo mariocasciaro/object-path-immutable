@@ -1,9 +1,14 @@
 Changelog
 ===========
 
+### 3.0
+
+  - **Possible breaking change** `merge` not does not accept options anymore
+  - Removed dependency on `deepmerge`
+  
 ### 2.0
 
-  - The library now has dependencies and is building with Rollup, therefore the UMD entry point is now `dist/object-path-immutable`. 
+  - **Possible breaking change** The library now has dependencies and is building with Rollup, therefore the UMD entry point is now `dist/object-path-immutable`. 
   If you are using this `object-path-immutable` with Node or another module bundler, this change should not affect you.
   - Added `merge` function
   

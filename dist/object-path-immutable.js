@@ -1,363 +1,321 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	(global.objectPathImmutable = factory());
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.objectPathImmutable = factory());
 }(this, (function () { 'use strict';
 
-	var isMergeableObject = function isMergeableObject(value) {
-		return isNonNullObject(value)
-			&& !isSpecial(value)
-	};
+  /*!
+   * isobject <https://github.com/jonschlinkert/isobject>
+   *
+   * Copyright (c) 2014-2017, Jon Schlinkert.
+   * Released under the MIT License.
+   */
 
-	function isNonNullObject(value) {
-		return !!value && typeof value === 'object'
-	}
+  var isobject = function isObject(val) {
+    return val != null && typeof val === 'object' && Array.isArray(val) === false;
+  };
 
-	function isSpecial(value) {
-		var stringValue = Object.prototype.toString.call(value);
+  function isObjectObject(o) {
+    return isobject(o) === true
+      && Object.prototype.toString.call(o) === '[object Object]';
+  }
 
-		return stringValue === '[object RegExp]'
-			|| stringValue === '[object Date]'
-			|| isReactElement(value)
-	}
+  var isPlainObject = function isPlainObject(o) {
+    var ctor,prot;
 
-	// see https://github.com/facebook/react/blob/b5ac963fb791d1298e7f396236383bc955f916c1/src/isomorphic/classic/element/ReactElement.js#L21-L25
-	var canUseSymbol = typeof Symbol === 'function' && Symbol.for;
-	var REACT_ELEMENT_TYPE = canUseSymbol ? Symbol.for('react.element') : 0xeac7;
+    if (isObjectObject(o) === false) return false;
 
-	function isReactElement(value) {
-		return value.$$typeof === REACT_ELEMENT_TYPE
-	}
+    // If has modified constructor
+    ctor = o.constructor;
+    if (typeof ctor !== 'function') return false;
 
-	function emptyTarget(val) {
-		return Array.isArray(val) ? [] : {}
-	}
+    // If has modified prototype
+    prot = ctor.prototype;
+    if (isObjectObject(prot) === false) return false;
 
-	function cloneUnlessOtherwiseSpecified(value, options) {
-		return (options.clone !== false && options.isMergeableObject(value))
-			? deepmerge(emptyTarget(value), value, options)
-			: value
-	}
+    // If constructor does not have an Object-specific method
+    if (prot.hasOwnProperty('isPrototypeOf') === false) {
+      return false;
+    }
 
-	function defaultArrayMerge(target, source, options) {
-		return target.concat(source).map(function(element) {
-			return cloneUnlessOtherwiseSpecified(element, options)
-		})
-	}
+    // Most likely a plain Object
+    return true;
+  };
 
-	function mergeObject(target, source, options) {
-		var destination = {};
-		if (options.isMergeableObject(target)) {
-			Object.keys(target).forEach(function(key) {
-				destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
-			});
-		}
-		Object.keys(source).forEach(function(key) {
-			if (!options.isMergeableObject(source[key]) || !target[key]) {
-				destination[key] = cloneUnlessOtherwiseSpecified(source[key], options);
-			} else {
-				destination[key] = deepmerge(target[key], source[key], options);
-			}
-		});
-		return destination
-	}
+  var _hasOwnProperty = Object.prototype.hasOwnProperty;
 
-	function deepmerge(target, source, options) {
-		options = options || {};
-		options.arrayMerge = options.arrayMerge || defaultArrayMerge;
-		options.isMergeableObject = options.isMergeableObject || isMergeableObject;
+  function isEmpty (value) {
+    if (isNumber(value)) {
+      return false
+    }
+    if (!value) {
+      return true
+    }
+    if (isArray(value) && value.length === 0) {
+      return true
+    } else if (!isString(value)) {
+      for (var i in value) {
+        if (_hasOwnProperty.call(value, i)) {
+          return false
+        }
+      }
+      return true
+    }
+    return false
+  }
 
-		var sourceIsArray = Array.isArray(source);
-		var targetIsArray = Array.isArray(target);
-		var sourceAndTargetTypesMatch = sourceIsArray === targetIsArray;
+  function isNumber (value) {
+    return typeof value === 'number'
+  }
 
-		if (!sourceAndTargetTypesMatch) {
-			return cloneUnlessOtherwiseSpecified(source, options)
-		} else if (sourceIsArray) {
-			return options.arrayMerge(target, source, options)
-		} else {
-			return mergeObject(target, source, options)
-		}
-	}
+  function isString (obj) {
+    return typeof obj === 'string'
+  }
 
-	deepmerge.all = function deepmergeAll(array, options) {
-		if (!Array.isArray(array)) {
-			throw new Error('first argument should be an array')
-		}
+  function isArray (obj) {
+    return Array.isArray(obj)
+  }
 
-		return array.reduce(function(prev, next) {
-			return deepmerge(prev, next, options)
-		}, {})
-	};
+  function assignToObj (target, source) {
+    for (var key in source) {
+      if (_hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+    return target
+  }
 
-	var deepmerge_1 = deepmerge;
+  function getKey (key) {
+    var intKey = parseInt(key);
+    if (intKey.toString() === key) {
+      return intKey
+    }
+    return key
+  }
 
-	var es = /*#__PURE__*/Object.freeze({
-		default: deepmerge_1
-	});
+  var objectPathImmutable = function (src) {
+    var dest = src;
+    var committed = false;
 
-	var deepmerge$1 = ( es && deepmerge_1 ) || es;
+    var transaction = Object.keys(api).reduce(function (proxy, prop) {
+      /* istanbul ignore else */
+      if (typeof api[prop] === 'function') {
+        proxy[prop] = function () {
+          var args = [dest, src].concat(Array.prototype.slice.call(arguments));
 
-	var _hasOwnProperty = Object.prototype.hasOwnProperty;
+          if (committed) {
+            throw new Error('Cannot call ' + prop + ' after `value`')
+          }
 
-	function isEmpty (value) {
-	  if (isNumber(value)) {
-	    return false
-	  }
-	  if (!value) {
-	    return true
-	  }
-	  if (isArray(value) && value.length === 0) {
-	    return true
-	  } else if (!isString(value)) {
-	    for (var i in value) {
-	      if (_hasOwnProperty.call(value, i)) {
-	        return false
-	      }
-	    }
-	    return true
-	  }
-	  return false
-	}
+          dest = api[prop].apply(null, args);
 
-	function isNumber (value) {
-	  return typeof value === 'number'
-	}
+          return transaction
+        };
+      }
 
-	function isString (obj) {
-	  return typeof obj === 'string'
-	}
+      return proxy
+    }, {});
 
-	function isArray (obj) {
-	  return Array.isArray(obj)
-	}
+    transaction.value = function () {
+      committed = true;
+      return dest
+    };
 
-	function assignToObj (target, source) {
-	  for (var key in source) {
-	    if (_hasOwnProperty.call(source, key)) {
-	      target[key] = source[key];
-	    }
-	  }
-	  return target
-	}
+    return transaction
+  };
 
-	function getKey (key) {
-	  var intKey = parseInt(key);
-	  if (intKey.toString() === key) {
-	    return intKey
-	  }
-	  return key
-	}
+  function clone (obj, createIfEmpty, assumeArray) {
+    if (obj == null) {
+      if (createIfEmpty) {
+        if (assumeArray) {
+          return []
+        }
 
-	function overwriteMerge (destinationArray, sourceArray) {
-	  return sourceArray
-	}
+        return {}
+      }
 
-	var objectPathImmutable = function (src) {
-	  var dest = src;
-	  var committed = false;
+      return obj
+    } else if (isArray(obj)) {
+      return obj.slice()
+    }
 
-	  var transaction = Object.keys(api).reduce(function (proxy, prop) {
-	    /* istanbul ignore else */
-	    if (typeof api[prop] === 'function') {
-	      proxy[prop] = function () {
-	        var args = [dest, src].concat(Array.prototype.slice.call(arguments));
+    return assignToObj({}, obj)
+  }
 
-	        if (committed) {
-	          throw new Error('Cannot call ' + prop + ' after `value`')
-	        }
+  function deepMerge (dest, src) {
+    if (dest !== src && isPlainObject(dest) && isPlainObject(src)) {
+      var merged = {};
+      for (var key in dest) {
+        if (dest.hasOwnProperty(key)) {
+          if (src.hasOwnProperty(key)) {
+            merged[key] = deepMerge(dest[key], src[key]);
+          } else {
+            merged[key] = dest[key];
+          }
+        }
+      }
 
-	        dest = api[prop].apply(null, args);
+      for (key in src) {
+        if (src.hasOwnProperty(key)) {
+          merged[key] = deepMerge(dest[key], src[key]);
+        }
+      }
+      return merged
+    }
+    return src
+  }
 
-	        return transaction
-	      };
-	    }
+  function changeImmutable (dest, src, path, changeCallback) {
+    if (isNumber(path)) {
+      path = [path];
+    }
+    if (isEmpty(path)) {
+      return src
+    }
+    if (isString(path)) {
+      return changeImmutable(dest, src, path.split('.').map(getKey), changeCallback)
+    }
+    var currentPath = path[0];
 
-	    return proxy
-	  }, {});
+    if (!dest || dest === src) {
+      dest = clone(src, true, isNumber(currentPath));
+    }
 
-	  transaction.value = function () {
-	    committed = true;
-	    return dest
-	  };
+    if (path.length === 1) {
+      return changeCallback(dest, currentPath)
+    }
 
-	  return transaction
-	};
+    if (src != null) {
+      src = src[currentPath];
+    }
 
-	function clone (obj, createIfEmpty, assumeArray) {
-	  if (obj == null) {
-	    if (createIfEmpty) {
-	      if (assumeArray) {
-	        return []
-	      }
+    dest[currentPath] = changeImmutable(dest[currentPath], src, path.slice(1), changeCallback);
 
-	      return {}
-	    }
+    return dest
+  }
 
-	    return obj
-	  } else if (isArray(obj)) {
-	    return obj.slice()
-	  }
+  var api = {};
+  api.set = function set (dest, src, path, value) {
+    if (isEmpty(path)) {
+      return value
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      clonedObj[finalPath] = value;
+      return clonedObj
+    })
+  };
 
-	  return assignToObj({}, obj)
-	}
+  api.update = function update (dest, src, path, updater) {
+    if (isEmpty(path)) {
+      return updater(clone(src))
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      clonedObj[finalPath] = updater(clonedObj[finalPath]);
+      return clonedObj
+    })
+  };
 
-	function changeImmutable (dest, src, path, changeCallback) {
-	  if (isNumber(path)) {
-	    path = [path];
-	  }
-	  if (isEmpty(path)) {
-	    return src
-	  }
-	  if (isString(path)) {
-	    return changeImmutable(dest, src, path.split('.').map(getKey), changeCallback)
-	  }
-	  var currentPath = path[0];
+  api.push = function push (dest, src, path /*, values */) {
+    var values = Array.prototype.slice.call(arguments, 3);
+    if (isEmpty(path)) {
+      if (!isArray(src)) {
+        return values
+      } else {
+        return src.concat(values)
+      }
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      if (!isArray(clonedObj[finalPath])) {
+        clonedObj[finalPath] = values;
+      } else {
+        clonedObj[finalPath] = clonedObj[finalPath].concat(values);
+      }
+      return clonedObj
+    })
+  };
 
-	  if (!dest || dest === src) {
-	    dest = clone(src, true, isNumber(currentPath));
-	  }
+  api.insert = function insert (dest, src, path, value, at) {
+    at = ~~at;
+    if (isEmpty(path)) {
+      if (!isArray(src)) {
+        return [value]
+      }
 
-	  if (path.length === 1) {
-	    return changeCallback(dest, currentPath)
-	  }
+      var first = src.slice(0, at);
+      first.push(value);
+      return first.concat(src.slice(at))
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      var arr = clonedObj[finalPath];
+      if (!isArray(arr)) {
+        if (arr != null && typeof arr !== 'undefined') {
+          throw new Error('Expected ' + path + 'to be an array. Instead got ' + typeof path)
+        }
+        arr = [];
+      }
 
-	  if (src != null) {
-	    src = src[currentPath];
-	  }
+      var first = arr.slice(0, at);
+      first.push(value);
+      clonedObj[finalPath] = first.concat(arr.slice(at));
+      return clonedObj
+    })
+  };
 
-	  dest[currentPath] = changeImmutable(dest[currentPath], src, path.slice(1), changeCallback);
+  api.del = function del (dest, src, path) {
+    if (isEmpty(path)) {
+      return void 0
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      if (Array.isArray(clonedObj)) {
+        if (clonedObj[finalPath] !== undefined) {
+          clonedObj.splice(finalPath, 1);
+        }
+      } else {
+        if (clonedObj.hasOwnProperty(finalPath)) {
+          delete clonedObj[finalPath];
+        }
+      }
+      return clonedObj
+    })
+  };
 
-	  return dest
-	}
+  api.assign = function assign (dest, src, path, source) {
+    if (isEmpty(path)) {
+      if (isEmpty(source)) {
+        return src
+      }
+      return assignToObj(clone(src), source)
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      source = Object(source);
+      var target = clone(clonedObj[finalPath], true);
+      assignToObj(target, source);
 
-	var api = {};
-	api.set = function set (dest, src, path, value) {
-	  if (isEmpty(path)) {
-	    return value
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    clonedObj[finalPath] = value;
-	    return clonedObj
-	  })
-	};
+      clonedObj[finalPath] = target;
+      return clonedObj
+    })
+  };
 
-	api.update = function update (dest, src, path, updater) {
-	  if (isEmpty(path)) {
-	    return updater(clone(src))
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    clonedObj[finalPath] = updater(clonedObj[finalPath]);
-	    return clonedObj
-	  })
-	};
+  api.merge = function assign (dest, src, path, source) {
+    if (isEmpty(path)) {
+      if (isEmpty(source)) {
+        return src
+      }
+      return deepMerge(src, source)
+    }
+    return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
+      source = Object(source);
+      clonedObj[finalPath] = deepMerge(clonedObj[finalPath], source);
+      return clonedObj
+    })
+  };
 
-	api.push = function push (dest, src, path /*, values */) {
-	  var values = Array.prototype.slice.call(arguments, 3);
-	  if (isEmpty(path)) {
-	    if (!isArray(src)) {
-	      return values
-	    } else {
-	      return src.concat(values)
-	    }
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    if (!isArray(clonedObj[finalPath])) {
-	      clonedObj[finalPath] = values;
-	    } else {
-	      clonedObj[finalPath] = clonedObj[finalPath].concat(values);
-	    }
-	    return clonedObj
-	  })
-	};
+  var objectPathImmutable_1 = Object.keys(api).reduce(function (objectPathImmutable, method) {
+    objectPathImmutable[method] = api[method].bind(null, null);
 
-	api.insert = function insert (dest, src, path, value, at) {
-	  at = ~~at;
-	  if (isEmpty(path)) {
-	    if (!isArray(src)) {
-	      return [value]
-	    }
+    return objectPathImmutable
+  }, objectPathImmutable);
 
-	    var first = src.slice(0, at);
-	    first.push(value);
-	    return first.concat(src.slice(at))
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    var arr = clonedObj[finalPath];
-	    if (!isArray(arr)) {
-	      if (arr != null && typeof arr !== 'undefined') {
-	        throw new Error('Expected ' + path + 'to be an array. Instead got ' + typeof path)
-	      }
-	      arr = [];
-	    }
-
-	    var first = arr.slice(0, at);
-	    first.push(value);
-	    clonedObj[finalPath] = first.concat(arr.slice(at));
-	    return clonedObj
-	  })
-	};
-
-	api.del = function del (dest, src, path) {
-	  if (isEmpty(path)) {
-	    return void 0
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    if (Array.isArray(clonedObj)) {
-	      if (clonedObj[finalPath] !== undefined) {
-	        clonedObj.splice(finalPath, 1);
-	      }
-	    } else {
-	      if (clonedObj.hasOwnProperty(finalPath)) {
-	        delete clonedObj[finalPath];
-	      }
-	    }
-	    return clonedObj
-	  })
-	};
-
-	api.assign = function assign (dest, src, path, source) {
-	  if (isEmpty(path)) {
-	    if (isEmpty(source)) {
-	      return src
-	    }
-	    return assignToObj(clone(src), source)
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    source = Object(source);
-	    var target = clone(clonedObj[finalPath], true);
-	    assignToObj(target, source);
-
-	    clonedObj[finalPath] = target;
-	    return clonedObj
-	  })
-	};
-
-	api.merge = function assign (dest, src, path, source, options) {
-	  options = options || {};
-	  if (options.arrayMerge === void 0) {
-	    options.arrayMerge = overwriteMerge;
-	  }
-
-	  if (isEmpty(path)) {
-	    if (isEmpty(source)) {
-	      return src
-	    }
-	    return deepmerge$1(src, source, options)
-	  }
-	  return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
-	    source = Object(source);
-	    clonedObj[finalPath] = deepmerge$1(clonedObj[finalPath], source, options);
-	    return clonedObj
-	  })
-	};
-
-	var objectPathImmutable_1 = Object.keys(api).reduce(function (objectPathImmutable, method) {
-	  objectPathImmutable[method] = api[method].bind(null, null);
-
-	  return objectPathImmutable
-	}, objectPathImmutable);
-
-	return objectPathImmutable_1;
+  return objectPathImmutable_1;
 
 })));

@@ -17,15 +17,6 @@ This can be seen as a simpler and more intuitive alternative to the *React Immut
 
 [View Changelog](CHANGELOG.md)
 
-## Webpack bug in `deepmerge`
-Webpack 3 and 4 have a bug that breaks bundling.
-If you see the Error: `deepmerge is not a function`, add this alias to your Webpack config:
-```
-alias: {
-	deepmerge$: path.resolve(__dirname, 'node_modules/deepmerge/dist/umd.js'),
-}
-```
-
 ## Install
 
     npm install object-path-immutable --save
@@ -199,13 +190,9 @@ const newObj = immutable.insert(obj, 'a.c', 'k', 1)
 ```
 
 
-#### merge (initialObject, path, value, options)
+#### merge (initialObject, path, value)
 
-Deep merge properties. Uses the `deepmarge` package. 
-One thing to notice is that `object-path-immutable` overwrites arrays by default 
-instead of concatenating them. You can change this behavior by passing the `arrayMerge` 
-option to `merge`. Please refer to the [deepmerge documentation](https://github.com/KyleAMathews/deepmerge) 
-for the details.
+Deep merge properties.
 
 ```javascript
 const newObj = immutable.merge(obj, 'a.c', {b: 'd'})

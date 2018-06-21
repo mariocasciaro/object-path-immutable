@@ -483,6 +483,36 @@ describe('merge', function () {
       e: [2]
     })
   })
+
+  it('should work if the destination is undefined', function () {
+    var obj = {
+      a: {
+        b: 1,
+        c: {
+          d: 2,
+          e: [1]
+        }
+      }
+    }
+
+    var newObj = op.merge(obj, 'a.c.f', {a: 1})
+    expect(newObj.a.c.f).to.be.eql({a: 1})
+  })
+
+  it('should work with bind and if the destination is undefined', function () {
+    var obj = {
+      a: {
+        b: 1,
+        c: {
+          d: 2,
+          e: [1]
+        }
+      }
+    }
+
+    var newObj = op(obj).merge('a.c.f', {a: 1}).value()
+    expect(newObj.a.c.f).to.be.eql({a: 1})
+  })
 })
 
 describe('bind', function () {

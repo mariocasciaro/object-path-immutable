@@ -1,4 +1,4 @@
-var deepmerge = require('deepmerge')
+var isPlainObject = require('is-plain-object')
 var _hasOwnProperty = Object.prototype.hasOwnProperty
 
 function isEmpty (value) {
@@ -50,10 +50,6 @@ function getKey (key) {
   return key
 }
 
-function overwriteMerge (destinationArray, sourceArray) {
-  return sourceArray
-}
-
 var objectPathImmutable = function (src) {
   var dest = src
   var committed = false
@@ -101,6 +97,29 @@ function clone (obj, createIfEmpty, assumeArray) {
   }
 
   return assignToObj({}, obj)
+}
+
+function deepMerge (dest, src) {
+  if (dest !== src && isPlainObject(dest) && isPlainObject(src)) {
+    var merged = {}
+    for (var key in dest) {
+      if (dest.hasOwnProperty(key)) {
+        if (src.hasOwnProperty(key)) {
+          merged[key] = deepMerge(dest[key], src[key])
+        } else {
+          merged[key] = dest[key]
+        }
+      }
+    }
+
+    for (key in src) {
+      if (src.hasOwnProperty(key)) {
+        merged[key] = deepMerge(dest[key], src[key])
+      }
+    }
+    return merged
+  }
+  return src
 }
 
 function changeImmutable (dest, src, path, changeCallback) {
@@ -234,21 +253,16 @@ api.assign = function assign (dest, src, path, source) {
   })
 }
 
-api.merge = function assign (dest, src, path, source, options) {
-  options = options || {}
-  if (options.arrayMerge === void 0) {
-    options.arrayMerge = overwriteMerge
-  }
-
+api.merge = function assign (dest, src, path, source) {
   if (isEmpty(path)) {
     if (isEmpty(source)) {
       return src
     }
-    return deepmerge(src, source, options)
+    return deepMerge(src, source)
   }
   return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
     source = Object(source)
-    clonedObj[finalPath] = deepmerge(clonedObj[finalPath], source, options)
+    clonedObj[finalPath] = deepMerge(clonedObj[finalPath], source)
     return clonedObj
   })
 }
