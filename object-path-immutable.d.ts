@@ -1,4 +1,4 @@
-type Path = string | string[]
+type Path = string | ReadonlyArray<string>;
 
 interface WrappedObject<T> {
     set(path?: Path, value?: any): WrappedObject<T>
