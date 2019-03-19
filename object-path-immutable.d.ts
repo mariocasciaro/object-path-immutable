@@ -6,6 +6,7 @@ interface WrappedObject<T> {
     del(path?: Path): WrappedObject<T>
     assign(path?: Path, source?: T): WrappedObject<T>
     update(path?: Path, updater?: (formerValue: any) => any): WrappedObject<T>
+    insert(path?: Path, value?: any, index?: number): WrappedObject<T>
     value(): T
 }
 
@@ -16,6 +17,7 @@ interface ObjectPathImmutable {
     del<T = object>(src: T, path?: Path): T
     assign<T = object>(src: T, path?: Path, source?: T): T
     update<T = object>(src: T, path?: Path, updater?: (formerValue: any) => any): WrappedObject<T>
+    insert<T = object>(src: T, path?: Path, value?: any, index?: number): T
 }
 
 declare module 'object-path-immutable' {
