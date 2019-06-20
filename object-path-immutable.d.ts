@@ -5,7 +5,7 @@ interface WrappedObject<T> {
     push(path?: Path, value?: any): WrappedObject<T>
     del(path?: Path): WrappedObject<T>
     assign(path?: Path, source?: T): WrappedObject<T>
-    merge(path?: Path, source?: T): WrappedObject<T>
+    merge(path?: Path, source?: any): WrappedObject<T>
     update(path?: Path, updater?: (formerValue: any) => any): WrappedObject<T>
     insert(path?: Path, value?: any, index?: number): WrappedObject<T>
     value(): T
