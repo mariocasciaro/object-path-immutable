@@ -17,7 +17,7 @@ interface ObjectPathImmutable {
     push<T = object>(src: T, path?: Path, value?: any): T
     del<T = object>(src: T, path?: Path): T
     assign<T = object>(src: T, path?: Path, source?: T): T
-    merge<T = object>(src: T, path?: Path, source?: T): T
+    merge<T = object>(src: T, path?: Path, source?: any): T
     update<T = object>(src: T, path?: Path, updater?: (formerValue: any) => any): WrappedObject<T>
     insert<T = object>(src: T, path?: Path, value?: any, index?: number): T
 }
