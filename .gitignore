@@ -6,3 +6,4 @@ generated
 coverage
 .DS_Store
 .history
+.nyc_output
