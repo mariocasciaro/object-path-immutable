@@ -1,8 +1,8 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.objectPathImmutable = factory());
-}(this, (function () { 'use strict';
+  (global = global || self, global.objectPathImmutable = factory());
+}(this, function () { 'use strict';
 
   /*!
    * isobject <https://github.com/jonschlinkert/isobject>
@@ -11,16 +11,23 @@
    * Released under the MIT License.
    */
 
-  var isobject = function isObject(val) {
+  function isObject(val) {
     return val != null && typeof val === 'object' && Array.isArray(val) === false;
-  };
+  }
+
+  /*!
+   * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
+   *
+   * Copyright (c) 2014-2017, Jon Schlinkert.
+   * Released under the MIT License.
+   */
 
   function isObjectObject(o) {
-    return isobject(o) === true
+    return isObject(o) === true
       && Object.prototype.toString.call(o) === '[object Object]';
   }
 
-  var isPlainObject = function isPlainObject(o) {
+  function isPlainObject(o) {
     var ctor,prot;
 
     if (isObjectObject(o) === false) return false;
@@ -40,7 +47,7 @@
 
     // Most likely a plain Object
     return true;
-  };
+  }
 
   var _hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -318,4 +325,4 @@
 
   return objectPathImmutable_1;
 
-})));
+}));

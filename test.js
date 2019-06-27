@@ -20,7 +20,7 @@ describe('set', function () {
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
+    expect(obj.a).to.be.eql({ b: 1 })
     // this should be the same
     expect(newObj.c).to.be.equal(obj.c)
 
@@ -60,7 +60,7 @@ describe('set', function () {
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(obj.a).to.be.eql({})
-    expect(newObj.a).to.be.eql({b: [, {f: 'a'}]}) // eslint-disable-line no-sparse-arrays
+    expect(newObj.a).to.be.eql({ b: [, { f: 'a' }] }) // eslint-disable-line no-sparse-arrays
   })
 
   it('should return the input value if passed an empty path', function () {
@@ -91,7 +91,7 @@ describe('update', function () {
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
+    expect(obj.a).to.be.eql({ b: 1 })
     // this should be the same
     expect(newObj.c).to.be.equal(obj.c)
 
@@ -115,7 +115,7 @@ describe('update', function () {
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
+    expect(obj.a).to.be.eql({ b: 1 })
     // this should be the same
     expect(newObj.c).to.be.equal(obj.c)
     expect(newObj.a.b).to.be.equal(1)
@@ -160,7 +160,7 @@ describe('insert', function () {
       b: {
         c: [],
         d: ['a', 'b'],
-        e: [{}, {f: 'g'}],
+        e: [{}, { f: 'g' }],
         f: 'i'
       }
     }
@@ -177,7 +177,7 @@ describe('insert', function () {
       b: {
         c: [],
         d: ['a', 'b'],
-        e: [{}, {f: 'g'}],
+        e: [{}, { f: 'g' }],
         f: 'i'
       }
     }
@@ -187,13 +187,20 @@ describe('insert', function () {
 
     var newObj = op.insert(obj, 'b.d', 'asdf', 3)
     expect(newObj).not.to.be.equal(obj)
-    expect(newObj.b.d).to.be.eql(['a', 'b', , 'asdf']) // eslint-disable-line no-sparse-arrays
+    expect(newObj.b.d[0]).to.be.eql('a')
+    expect(newObj.b.d[1]).to.be.eql('b')
+    // eslint-disable-next-line
+    expect(newObj.b.d[2]).to.be.undefined
+    expect(newObj.b.d[3]).to.be.eql('asdf')
+    // eslint-disable-next-line
+    expect(newObj.b.d[4]).to.be.undefined
+    expect(newObj.b.d.length).to.be.eql(5)
   })
 
   it('should throw if asked to insert into something other than an array',
     function () {
       expect(function () {
-        op.insert({foo: 'bar'}, 'foo', 'baz')
+        op.insert({ foo: 'bar' }, 'foo', 'baz')
       }).to.throw()
     })
 
@@ -278,7 +285,7 @@ describe('del', function () {
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(newObj.c).to.be.equal(obj.c)
 
-    expect(newObj.a).to.be.eql({f: 2})
+    expect(newObj.a).to.be.eql({ f: 2 })
   })
 
   it('should delete deep values in array without modifying the object', function () {
@@ -322,11 +329,11 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a', {b: 3})
+    var newObj = op.assign(obj, 'a', { b: 3 })
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
+    expect(obj.a).to.be.eql({ b: 1 })
     expect(newObj.c).to.be.equal(obj.c)
 
     expect(newObj.a.b).to.be.equal(3)
@@ -339,12 +346,12 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a', {c: 2})
+    var newObj = op.assign(obj, 'a', { c: 2 })
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
-    expect(newObj.a).to.be.eql({b: 1, c: 2})
+    expect(obj.a).to.be.eql({ b: 1 })
+    expect(newObj.a).to.be.eql({ b: 1, c: 2 })
   })
 
   it('should create intermediate objects', function () {
@@ -355,12 +362,12 @@ describe('assign', function () {
       }
     }
 
-    var newObj = op.assign(obj, 'a.b', {f: 'a'})
+    var newObj = op.assign(obj, 'a.b', { f: 'a' })
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(obj.a).to.be.eql({})
-    expect(newObj.a).to.be.eql({b: {f: 'a'}})
+    expect(newObj.a).to.be.eql({ b: { f: 'a' } })
   })
 
   it('should return the original object if passed an empty path and an empty value to assign', function () {
@@ -412,11 +419,11 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op.merge(obj, 'a', {b: 3})
+    var newObj = op.merge(obj, 'a', { b: 3 })
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
-    expect(obj.a).to.be.eql({b: 1})
+    expect(obj.a).to.be.eql({ b: 1 })
     expect(newObj.c).to.be.equal(obj.c)
 
     expect(newObj.a.b).to.be.equal(3)
@@ -433,7 +440,7 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op.merge(obj, 'a', {c: {e: 4}})
+    var newObj = op.merge(obj, 'a', { c: { e: 4 } })
 
     expect(newObj).not.to.be.equal(obj)
     expect(newObj.a).not.to.be.equal(obj.a)
@@ -455,7 +462,7 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op.merge(obj, 'a', {c: {e: [2]}})
+    var newObj = op.merge(obj, 'a', { c: { e: [2] } })
 
     expect(obj.a.b).to.be.eql(1)
     expect(newObj.a.c).to.be.eql({
@@ -475,7 +482,7 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op.merge(obj, null, {a: {c: {e: [2]}}})
+    var newObj = op.merge(obj, null, { a: { c: { e: [2] } } })
 
     expect(obj.a.b).to.be.eql(1)
     expect(newObj.a.c).to.be.eql({
@@ -495,8 +502,8 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op.merge(obj, 'a.c.f', {a: 1})
-    expect(newObj.a.c.f).to.be.eql({a: 1})
+    var newObj = op.merge(obj, 'a.c.f', { a: 1 })
+    expect(newObj.a.c.f).to.be.eql({ a: 1 })
   })
 
   it('should work with bind and if the destination is undefined', function () {
@@ -510,8 +517,8 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op(obj).merge('a.c.f', {a: 1}).value()
-    expect(newObj.a.c.f).to.be.eql({a: 1})
+    var newObj = op(obj).merge('a.c.f', { a: 1 }).value()
+    expect(newObj.a.c.f).to.be.eql({ a: 1 })
   })
 })
 
@@ -533,7 +540,7 @@ describe('bind', function () {
     expect(newObj.a).not.to.be.equal(obj.a)
     expect(newObj.c).to.be.equal(obj.c)
 
-    expect(newObj.a).to.be.eql({f: 3, q: 'q'})
+    expect(newObj.a).to.be.eql({ f: 3, q: 'q' })
   })
 
   it('should return the bound object if no operations made', function () {
