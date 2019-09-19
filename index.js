@@ -33,25 +33,25 @@ function isArray (obj) {
   return Array.isArray(obj)
 }
 
-function isInArray(value, array) {
-  return array.indexOf(value) > -1;
+function isInArray (value, array) {
+  return array.indexOf(value) > -1
 }
 
-function hasOwnProperty(obj, prop) {
-  if(obj == null) {
+function hasOwnProperty (obj, prop) {
+  if (obj == null) {
     return false
   }
-  //to handle objects with null prototypes (too edge case?)
+  // to handle objects with null prototypes (too edge case?)
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
 
-function hasShallowProperty(obj, prop) {
-  return isNumber(prop) && isArray(obj) || hasOwnProperty(obj, prop)
+function hasShallowProperty (obj, prop) {
+  return (isNumber(prop) && isArray(obj)) || hasOwnProperty(obj, prop)
 }
 
-function getShallowProperty(obj, prop) {
+function getShallowProperty (obj, prop) {
   if (hasShallowProperty(obj, prop)) {
-    return obj[prop];
+    return obj[prop]
   }
 }
 
@@ -144,7 +144,7 @@ function deepMerge (dest, src) {
   return src
 }
 
-function changeImmutable (dest, src, path, changeCallback,matchThenMap) {
+function changeImmutable (dest, src, path, changeCallback, matchThenMap) {
   if (isNumber(path)) {
     path = [path]
   }
@@ -152,7 +152,7 @@ function changeImmutable (dest, src, path, changeCallback,matchThenMap) {
     return src
   }
   if (isString(path)) {
-    return changeImmutable(dest, src, path.split('.').map(getKey), changeCallback,matchThenMap)
+    return changeImmutable(dest, src, path.split('.').map(getKey), changeCallback, matchThenMap)
   }
   var currentPath = path[0]
 
@@ -168,14 +168,14 @@ function changeImmutable (dest, src, path, changeCallback,matchThenMap) {
     src = src[currentPath]
   }
 
-  if (!isEmpty(matchThenMap) && isArray(src) && isInArray(currentPath,matchThenMap)) {
-    path.shift();
+  if (!isEmpty(matchThenMap) && isArray(src) && isInArray(currentPath, matchThenMap)) {
+    path.shift()
     dest[currentPath] = src
       .map(i => {
-        return changeImmutable(dest[currentPath], src, path.slice(1), changeCallback,matchThenMap)
-      });
-  }else{
-      dest[currentPath] = changeImmutable(dest[currentPath], src, path.slice(1), changeCallback,matchThenMap)
+        return changeImmutable(dest[currentPath], src, path.slice(1), changeCallback, matchThenMap)
+      })
+  } else {
+    dest[currentPath] = changeImmutable(dest[currentPath], src, path.slice(1), changeCallback, matchThenMap)
   }
 
   return dest
@@ -183,7 +183,7 @@ function changeImmutable (dest, src, path, changeCallback,matchThenMap) {
 
 var api = {}
 
-api.get = function get (src, path, defaultValue, matchThenMap){
+api.get = function get (src, path, defaultValue, matchThenMap) {
   // console.log(src, path, defaultValue, matchThenMap);
   if (isNumber(path)) {
     path = [path]
@@ -192,53 +192,53 @@ api.get = function get (src, path, defaultValue, matchThenMap){
     return src
   }
   if (isString(path)) {
-    return api.get(src, path.split('.'), defaultValue, matchThenMap);
+    return api.get(src, path.split('.'), defaultValue, matchThenMap)
   }
 
-  var currentPath = path[0];
+  var currentPath = path[0]
 
-  if (!isEmpty(matchThenMap) && isArray(src) && isInArray(currentPath,matchThenMap)) {
-    path.shift();
+  if (!isEmpty(matchThenMap) && isArray(src) && isInArray(currentPath, matchThenMap)) {
+    path.shift()
     return src
       .map(i => {
-        return api.get(i, path, defaultValue,matchThenMap);
-      });
+        return api.get(i, path, defaultValue, matchThenMap)
+      })
   }
 
-  var nextObj = getShallowProperty(src, currentPath);
+  var nextObj = getShallowProperty(src, currentPath)
 
   if (nextObj === void 0) {
-    return defaultValue;
+    return defaultValue
   }
 
   if (path.length === 1) {
-    return nextObj;
+    return nextObj
   }
 
-  return api.get(src[currentPath], path.slice(1), defaultValue, matchThenMap);
-};
+  return api.get(src[currentPath], path.slice(1), defaultValue, matchThenMap)
+}
 
 api.ensureExists = function ensureExists (dest, src, path, defaultValue, matchThenMap) {
   if (isEmpty(path)) {
     return src
   }
-  var currentValue = api.get(src, path, undefined,matchThenMap);
+  var currentValue = api.get(src, path, undefined, matchThenMap)
   if (currentValue === void 0) {
-    var newSrc = api.set(dest, src, path, defaultValue, matchThenMap);
-    return newSrc;
-  }else {
-    return src;
+    var newSrc = api.set(dest, src, path, defaultValue, matchThenMap)
+    return newSrc
+  } else {
+    return src
   }
 }
 
-api.set = function set (dest, src, path, value,matchThenMap) {
+api.set = function set (dest, src, path, value, matchThenMap) {
   if (isEmpty(path)) {
     return value
   }
   return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
     clonedObj[finalPath] = value
     return clonedObj
-  },matchThenMap)
+  }, matchThenMap)
 }
 
 api.update = function update (dest, src, path, updater) {
@@ -348,9 +348,9 @@ api.merge = function assign (dest, src, path, source) {
 
 module.exports = Object.keys(api).reduce(function (objectPathImmutable, method) {
   if (method !== 'get') {
-      objectPathImmutable[method] = api[method].bind(null, null)
-  }else{
-      objectPathImmutable[method] = api[method]
+    objectPathImmutable[method] = api[method].bind(null, null)
+  } else {
+    objectPathImmutable[method] = api[method]
   }
 
   return objectPathImmutable
