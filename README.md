@@ -5,21 +5,23 @@
 [![deps](https://img.shields.io/david/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://david-dm.org/mariocasciaro/object-path-immutable)
 [![devdeps](https://img.shields.io/david/dev/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://david-dm.org/mariocasciaro/object-path-immutable#info=devDependencies)
 
-object-path-immutable
+object-path-immutable-rowrowrowrow
 ===========
+
+This repo is based on https://github.com/mariocasciaro/object-path-immutable with added features. Please checkout that repo for more information.
 
 Tiny JS library to modify deep object properties without modifying the original object (immutability).
 Works great with React (especially when using `setState()`) and Redux (inside a reducer).
 
 This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*.
 
-## Changelog
+## Please see the basis for this repo
 
-[View Changelog](CHANGELOG.md)
+[object-path-immutable](https://github.com/mariocasciaro/object-path-immutable)
 
 ## Install
 
-    npm install object-path-immutable --save
+    npm install object-path-immutable-rowrowrowrow --save
 
 ## Quick usage
 
@@ -64,12 +66,38 @@ const newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
 
 const obj = {
   a: {
-    b: 'c',
-    c: ['d', 'f']
+    b: 'f',
+    c: ['d', 'f'],
+    'MAP': [
+      {
+        g: 'h1',
+        i: 'j1'
+      },
+      {
+        g: 'h2',
+        i: 'j2'
+      },
+    ]
   }
-}
+};
 
 import immutable from 'object-path-immutable'
+```
+#### get (initialObject, path, defaultValue, matchThenMap)
+
+Return an object property or array of object properties.
+
+- Path can be either a string or an array.
+- matchThenMap is an array of keys that once matched in the object will propogate the path, defaultValue, and matchThenMap to all array values returning an array of values.
+
+```javascript
+const existingObject1 = immutable.get(obj, 'a.MAP.g', 'f',['MAP'])
+
+// ['h1','h2']
+
+const existingObject2 = immutable.get(obj, ['a', 'MAP','i'], 'f',['MAP'])
+
+// ['j1','j2']
 ```
 
 #### set (initialObject, path, value)
@@ -198,7 +226,72 @@ Deep merge properties.
 const newObj = immutable.merge(obj, 'a.c', {b: 'd'})
 ```
 
-## Equivalent library with side effects
+#### ensureExists (initialObject, path, defaultValue, matchThenMap)
 
-[object-path](https://github.com/mariocasciaro/object-path)
+Checks if an objects value exists, if not return a new object with the updated value, else return the source object without changes.
 
+- Path can be either a string or an array.
+- matchThenMap is an array of keys that once matched in the object will propogate the path, defaultValue, and matchThenMap to all array values returning an array of values.
+
+```javascript
+const newObject1 = immutable.ensureExists(obj, 'a.z', 'f')
+
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f'],
+//     'MAP': [
+//       {
+//         g: 'h1',
+//         i: 'j1'
+//       },
+//       {
+//         g: 'h2',
+//         i: 'j2'
+//       },
+//     ],
+//     z: 'f'
+//   }
+// }
+
+const newObject2 = immutable.ensureExists(obj, 'a.MAP.z', 'f',['MAP'])
+
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f'],
+//     'MAP': [
+//       {
+//         g: 'h1',
+//         i: 'j1',
+//         z:'f'
+//       },
+//       {
+//         g: 'h2',
+//         i: 'j2',
+//         z:'f'
+//       },
+//     ],
+//     z: 'f'
+//   }
+// }
+
+const unchangedObject = immutable.get(obj, ['a', 'MAP','g'], 'f',['MAP'])
+
+// {
+//   a: {
+//     b: 'f',
+//     c: ['d', 'f'],
+//     'MAP': [
+//       {
+//         g: 'h1',
+//         i: 'j1'
+//       },
+//       {
+//         g: 'h2',
+//         i: 'j2'
+//       },
+//     ]
+//   }
+// }
+```
