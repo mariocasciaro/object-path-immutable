@@ -1,6 +1,6 @@
 {
   "name": "object-path-immutable-rowrowrowrow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Based on https://github.com/mariocasciaro/object-path-immutable with added features.",
   "author": "David Rosenbloom <darosenbloom@gmail.com>",
   "license": "MIT",
