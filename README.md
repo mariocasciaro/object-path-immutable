@@ -54,7 +54,7 @@ const newObj = immutable.set(obj, 'a.b', 'f')
 Note that you can also chain the api's and call `value()` at the end to retrieve the resulting object.
 
 ```javascript
-const newObj = immutable(obj).set('a.b', 'f').del('a.c.0').value()
+const newObj = immutable.wrap(obj).set('a.b', 'f').del('a.c.0').value()
 ```
 
 ## API
