@@ -1,4 +1,4 @@
-var isPlainObject = require('is-plain-object')
+import isPlainObject from 'is-plain-object'
 var _hasOwnProperty = Object.prototype.hasOwnProperty
 
 function isEmpty (value) {
@@ -103,8 +103,8 @@ function deepMerge (dest, src) {
   if (dest !== src && isPlainObject(dest) && isPlainObject(src)) {
     var merged = {}
     for (var key in dest) {
-      if (dest.hasOwnProperty(key)) {
-        if (src.hasOwnProperty(key)) {
+      if (_hasOwnProperty.call(dest, key)) {
+        if (_hasOwnProperty.call(src, key)) {
           merged[key] = deepMerge(dest[key], src[key])
         } else {
           merged[key] = dest[key]
@@ -113,7 +113,7 @@ function deepMerge (dest, src) {
     }
 
     for (key in src) {
-      if (src.hasOwnProperty(key)) {
+      if (_hasOwnProperty.call(src, key)) {
         merged[key] = deepMerge(dest[key], src[key])
       }
     }
@@ -220,7 +220,7 @@ api.insert = function insert (dest, src, path, value, at) {
 
 api.del = function del (dest, src, path) {
   if (isEmpty(path)) {
-    return void 0
+    return undefined
   }
   return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
     if (Array.isArray(clonedObj)) {
@@ -228,7 +228,7 @@ api.del = function del (dest, src, path) {
         clonedObj.splice(finalPath, 1)
       }
     } else {
-      if (clonedObj.hasOwnProperty(finalPath)) {
+      if (_hasOwnProperty.call(clonedObj, finalPath)) {
         delete clonedObj[finalPath]
       }
     }

@@ -1,8 +1,7 @@
-(function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+(function (factory) {
   typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.objectPathImmutable = factory());
-}(this, function () { 'use strict';
+  factory();
+}(function () { 'use strict';
 
   /*!
    * isobject <https://github.com/jonschlinkert/isobject>
@@ -153,8 +152,8 @@
     if (dest !== src && isPlainObject(dest) && isPlainObject(src)) {
       var merged = {};
       for (var key in dest) {
-        if (dest.hasOwnProperty(key)) {
-          if (src.hasOwnProperty(key)) {
+        if (_hasOwnProperty.call(dest, key)) {
+          if (_hasOwnProperty.call(src, key)) {
             merged[key] = deepMerge(dest[key], src[key]);
           } else {
             merged[key] = dest[key];
@@ -163,7 +162,7 @@
       }
 
       for (key in src) {
-        if (src.hasOwnProperty(key)) {
+        if (_hasOwnProperty.call(src, key)) {
           merged[key] = deepMerge(dest[key], src[key]);
         }
       }
@@ -270,7 +269,7 @@
 
   api.del = function del (dest, src, path) {
     if (isEmpty(path)) {
-      return void 0
+      return undefined
     }
     return changeImmutable(dest, src, path, function (clonedObj, finalPath) {
       if (Array.isArray(clonedObj)) {
@@ -278,7 +277,7 @@
           clonedObj.splice(finalPath, 1);
         }
       } else {
-        if (clonedObj.hasOwnProperty(finalPath)) {
+        if (_hasOwnProperty.call(clonedObj, finalPath)) {
           delete clonedObj[finalPath];
         }
       }
@@ -317,12 +316,10 @@
     })
   };
 
-  var objectPathImmutable_1 = Object.keys(api).reduce(function (objectPathImmutable, method) {
+  module.exports = Object.keys(api).reduce(function (objectPathImmutable, method) {
     objectPathImmutable[method] = api[method].bind(null, null);
 
     return objectPathImmutable
   }, objectPathImmutable);
-
-  return objectPathImmutable_1;
 
 }));

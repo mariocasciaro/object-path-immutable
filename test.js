@@ -207,7 +207,7 @@ describe('insert', function () {
   it('should return an array with an undefined value if passed an empty path and empty value and src is not an array', function () {
     var obj = {}
 
-    expect(op.insert(obj, '')).to.be.deep.equal([void 0])
+    expect(op.insert(obj, '')).to.be.deep.equal([undefined])
   })
 
   it('should insert the value in src if passed an empty path', function () {
