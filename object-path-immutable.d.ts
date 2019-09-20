@@ -12,7 +12,7 @@ interface WrappedObject<T> {
 }
 
 interface ObjectPathImmutable {
-    <T>(obj: T): WrappedObject<T>
+    wrap<T>(obj: T): WrappedObject<T>
     set<T = object>(src: T, path?: Path, value?: any): T
     push<T = object>(src: T, path?: Path, value?: any): T
     del<T = object>(src: T, path?: Path): T

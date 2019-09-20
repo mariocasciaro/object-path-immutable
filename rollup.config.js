@@ -19,11 +19,13 @@ export default [{
     file: `cjs/${pkg.name}.js`,
     format: 'cjs',
     esModule: false
-  }
+  },
+  external: [ 'is-plain-object' ]
 }, {
   input: 'src/object-path-immutable.js',
   output: {
     file: `esm/${pkg.name}.js`,
     format: 'esm'
-  }
+  },
+  external: [ 'is-plain-object' ]
 }]

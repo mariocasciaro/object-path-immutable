@@ -1,9 +1,7 @@
 /* globals describe, it */
 
-'use strict'
-
 var expect = require('chai').expect
-var op = require('./')
+var op = require('../')
 
 describe('set', function () {
   it('should set a deep key without modifying the original object', function () {
@@ -506,7 +504,7 @@ describe('merge', function () {
     expect(newObj.a.c.f).to.be.eql({ a: 1 })
   })
 
-  it('should work with bind and if the destination is undefined', function () {
+  it('should work with wrap and if the destination is undefined', function () {
     var obj = {
       a: {
         b: 1,
@@ -517,13 +515,13 @@ describe('merge', function () {
       }
     }
 
-    var newObj = op(obj).merge('a.c.f', { a: 1 }).value()
+    var newObj = op.wrap(obj).merge('a.c.f', { a: 1 }).value()
     expect(newObj.a.c.f).to.be.eql({ a: 1 })
   })
 })
 
 describe('bind', function () {
-  it('should execute all methods on the bound object', function () {
+  it('should execute all methods on the wrapped object', function () {
     var obj = {
       a: {
         d: 1,
@@ -532,7 +530,7 @@ describe('bind', function () {
       c: {}
     }
 
-    var newObj = op(obj).set('a.q', 'q').del('a.d').update('a.f', function (v) {
+    var newObj = op.wrap(obj).set('a.q', 'q').del('a.d').update('a.f', function (v) {
       return v + 1
     }).value()
 
@@ -543,14 +541,14 @@ describe('bind', function () {
     expect(newObj.a).to.be.eql({ f: 3, q: 'q' })
   })
 
-  it('should return the bound object if no operations made', function () {
+  it('should return the wrapped object if no operations made', function () {
     var obj = {}
 
-    expect(op(obj).value()).to.be.equal(obj)
+    expect(op.wrap(obj).value()).to.be.equal(obj)
   })
 
   it('should throw if an operation is attempted after `value` called', function () {
-    var transaction = op({
+    var transaction = op.wrap({
       foo: 'bar',
       fiz: [],
       frob: {}
