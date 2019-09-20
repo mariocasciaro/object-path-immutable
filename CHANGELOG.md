@@ -1,6 +1,11 @@
 Changelog
 ===========
 
+### 4.0
+
+  - **Breaking change**: the previous default export is now called `wrap()`
+  - **Possible breaking change**: `object-path-immutable` now uses ES modules which means if you are in an ESM environment you will have to use named exports.
+
 ### 3.0
 
   - **Possible breaking change** `merge` not does not accept options anymore
