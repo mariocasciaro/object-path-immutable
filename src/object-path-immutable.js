@@ -1,4 +1,6 @@
 import isPlainObject from 'is-plain-object'
+import op from 'object-path'
+
 var _hasOwnProperty = Object.prototype.hasOwnProperty
 
 function isEmpty (value) {
@@ -274,3 +276,4 @@ export var insert = api.insert.bind(null, null)
 export var del = api.del.bind(null, null)
 export var assign = api.assign.bind(null, null)
 export var merge = api.merge.bind(null, null)
+export var get = op.get.bind(null)

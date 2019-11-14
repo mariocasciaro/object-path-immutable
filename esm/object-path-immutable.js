@@ -1,4 +1,5 @@
 import isPlainObject from 'is-plain-object';
+import op from 'object-path';
 
 var _hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -275,5 +276,6 @@ var insert = api.insert.bind(null, null);
 var del = api.del.bind(null, null);
 var assign = api.assign.bind(null, null);
 var merge = api.merge.bind(null, null);
+var get = op.get.bind(null);
 
-export { assign, del, insert, merge, push, set, update, wrap };
+export { assign, del, get, insert, merge, push, set, update, wrap };
