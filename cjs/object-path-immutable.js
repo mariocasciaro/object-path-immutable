@@ -3,6 +3,7 @@
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var isPlainObject = _interopDefault(require('is-plain-object'));
+var op = _interopDefault(require('object-path'));
 
 var _hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -279,9 +280,11 @@ var insert = api.insert.bind(null, null);
 var del = api.del.bind(null, null);
 var assign = api.assign.bind(null, null);
 var merge = api.merge.bind(null, null);
+var get = op.get.bind(null);
 
 exports.assign = assign;
 exports.del = del;
+exports.get = get;
 exports.insert = insert;
 exports.merge = merge;
 exports.push = push;

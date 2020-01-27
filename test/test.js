@@ -3,6 +3,137 @@
 var expect = require('chai').expect
 var op = require('../')
 
+function getTestObj () {
+  return {
+    a: 'b',
+    b: {
+      c: [],
+      d: ['a', 'b'],
+      e: [{}, { f: 'g' }],
+      f: 'i'
+    }
+  }
+}
+
+describe('get', function () {
+  it('should return the value using unicode key', function () {
+    var obj = {
+      '15\u00f8C': {
+        '3\u0111': 1
+      }
+    }
+    expect(op.get(obj, '15\u00f8C.3\u0111')).to.be.equal(1)
+    expect(op.get(obj, ['15\u00f8C', '3\u0111'])).to.be.equal(1)
+  })
+
+  it('should return the value using dot in key', function () {
+    var obj = {
+      'a.b': {
+        'looks.like': 1
+      }
+    }
+    expect(op.get(obj, 'a.b.looks.like')).to.be.equal(undefined)
+    expect(op.get(obj, ['a.b', 'looks.like'])).to.be.equal(1)
+  })
+
+  it('should return the value under shallow object', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'a')).to.be.equal('b')
+    expect(op.get(obj, ['a'])).to.be.equal('b')
+  })
+
+  it('should work with number path', function () {
+    var obj = getTestObj()
+    expect(op.get(obj.b.d, 0)).to.be.equal('a')
+    expect(op.get(obj.b, 0)).to.be.equal(undefined)
+  })
+
+  it('should return the value under deep object', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'b.f')).to.be.equal('i')
+    expect(op.get(obj, ['b', 'f'])).to.be.equal('i')
+  })
+
+  it('should return the value under array', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'b.d.0')).to.be.equal('a')
+    expect(op.get(obj, ['b', 'd', 0])).to.be.equal('a')
+  })
+
+  it('should return the value under array deep', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'b.e.1.f')).to.be.equal('g')
+    expect(op.get(obj, ['b', 'e', 1, 'f'])).to.be.equal('g')
+  })
+
+  it('should return undefined for missing values under object', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'a.b')).to.be.equal(undefined)
+    expect(op.get(obj, ['a', 'b'])).to.be.equal(undefined)
+  })
+
+  it('should return undefined for missing values under array', function () {
+    var obj = getTestObj()
+    expect(op.get(obj, 'b.d.5')).to.be.equal(undefined)
+    expect(op.get(obj, ['b', 'd', '5'])).to.be.equal(undefined)
+  })
+
+  it('should return the value under integer-like key', function () {
+    var obj = { '1a': 'foo' }
+    expect(op.get(obj, '1a')).to.be.equal('foo')
+    expect(op.get(obj, ['1a'])).to.be.equal('foo')
+  })
+
+  it('should return the default value when the key doesnt exist', function () {
+    var obj = { '1a': 'foo' }
+    expect(op.get(obj, '1b', null)).to.be.equal(null)
+    expect(op.get(obj, ['1b'], null)).to.be.equal(null)
+  })
+
+  it('should return the default value when path is empty', function () {
+    var obj = { '1a': 'foo' }
+    expect(op.get(obj, '', null)).to.be.deep.equal({ '1a': 'foo' })
+    expect(op.get(obj, [])).to.be.deep.equal({ '1a': 'foo' })
+    expect(op.get({ }, ['1'])).to.be.equal(undefined)
+  })
+
+  it('should return the default value when object is null or undefined', function () {
+    expect(op.get(null, 'test', 'a')).to.be.deep.equal('a')
+    expect(op.get(undefined, 'test', 'a')).to.be.deep.equal('a')
+  })
+
+  it(
+    'should not fail on an object with a null prototype',
+    function assertSuccessForObjWithNullProto () {
+      var foo = 'FOO'
+      var objWithNullProto = Object.create(null)
+      objWithNullProto.foo = foo
+      expect(op.get(objWithNullProto, 'foo')).to.equal(foo)
+    }
+  )
+
+  it('should skip non own properties', function () {
+    var Base = function (enabled) { }
+    Base.prototype = {
+      one: {
+        two: true
+      }
+    }
+    var Extended = function () {
+      Base.call(this, true)
+    }
+    Extended.prototype = Object.create(Base.prototype)
+
+    var extended = new Extended()
+
+    expect(op.get(extended, ['one', 'two'])).to.be.equal(undefined)
+    extended.enabled = true
+
+    expect(op.get(extended, 'enabled')).to.be.equal(true)
+    expect(op.get(extended, 'one')).to.be.equal(undefined)
+  })
+})
+
 describe('set', function () {
   it('should set a deep key without modifying the original object', function () {
     var obj = {

@@ -26,7 +26,8 @@
     "standard-fix": "standard --fix"
   },
   "dependencies": {
-    "is-plain-object": "^3.0.0"
+    "is-plain-object": "^3.0.0",
+    "object-path": "^0.11.4"
   },
   "devDependencies": {
     "chai": "^4.2.0",
