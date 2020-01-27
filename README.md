@@ -51,7 +51,9 @@ const newObj = immutable.set(obj, 'a.b', 'f')
 // obj.a.c === newObj.a.c
 ```
 
-Note that you can also chain the api's and call `value()` at the end to retrieve the resulting object.
+### Wrap mode
+
+You can also chain the api's and call `value()` at the end to retrieve the resulting object.
 
 ```javascript
 const newObj = immutable.wrap(obj).set('a.b', 'f').del('a.c.0').value()
@@ -197,6 +199,12 @@ Deep merge properties.
 ```javascript
 const newObj = immutable.merge(obj, 'a.c', {b: 'd'})
 ```
+
+### Getters (not available in wrap mode)
+
+#### get (object, path, defaultValue)
+
+Retrieve a deep object property. Imported from [object-path](https://github.com/mariocasciaro/object-path) for convenience.
 
 ## Equivalent library with side effects
 

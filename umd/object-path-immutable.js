@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = global || self, factory(global.objectPathImmutable = {}));
-}(this, function (exports) { 'use strict';
+}(this, (function (exports) { 'use strict';
 
   /*!
    * isobject <https://github.com/jonschlinkert/isobject>
@@ -617,7 +617,7 @@
   var del = api.del.bind(null, null);
   var assign = api.assign.bind(null, null);
   var merge = api.merge.bind(null, null);
-  var get = objectPath.get.bind(null);
+  var get = objectPath.get;
 
   exports.assign = assign;
   exports.del = del;
@@ -631,4 +631,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));

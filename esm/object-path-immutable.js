@@ -276,6 +276,6 @@ var insert = api.insert.bind(null, null);
 var del = api.del.bind(null, null);
 var assign = api.assign.bind(null, null);
 var merge = api.merge.bind(null, null);
-var get = op.get.bind(null);
+var get = op.get;
 
 export { assign, del, get, insert, merge, push, set, update, wrap };
