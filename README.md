@@ -45,10 +45,10 @@ const newObj = immutable.set(obj, 'a.b', 'f')
 
 // obj !== newObj
 // obj.a !== newObj.a
-// obj.b !== newObj.b
+// obj.a.b !== newObj.a.b
 
 // However:
-// obj.c === newObj.c
+// obj.a.c === newObj.a.c
 ```
 
 Note that you can also chain the api's and call `value()` at the end to retrieve the resulting object.
