@@ -69,7 +69,7 @@ const obj = {
   }
 }
 
-import immutable from 'object-path-immutable'
+import * as immutable from 'object-path-immutable'
 ```
 
 #### set (initialObject, path, value)
