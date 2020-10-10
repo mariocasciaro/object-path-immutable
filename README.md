@@ -13,8 +13,6 @@ Works great with React (especially when using `setState()`) and Redux (inside a 
 
 This can be seen as a simpler and more intuitive alternative to the *React Immutability Helpers* and *Immutable.js*.
 
-Project sponsored by [<img src="https://frontendrobot.com/assets/fr-full-logo-green.png" width="200">](https://frontendrobot.com)
-
 ## Changelog
 
 [View Changelog](CHANGELOG.md)
