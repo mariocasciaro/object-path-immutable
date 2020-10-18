@@ -1,13 +1,13 @@
 {
-  "name": "object-path-immutable",
-  "version": "4.1.0",
-  "description": "Modify deep object properties without modifying the original object (immutability). Works great with React and Redux.",
-  "author": "Mario Casciaro <m@mario.fyi>",
+  "name": "object-path-immutable-rowrowrowrow",
+  "version": "2.0.0",
+  "description": "Based on https://github.com/mariocasciaro/object-path-immutable with added features.",
+  "author": "David Rosenbloom <darosenbloom@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/mariocasciaro/object-path-immutable",
+  "homepage": "https://github.com/rowrowrowrow/object-path-immutable-rowrowrowrow",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mariocasciaro/object-path-immutable.git"
+    "url": "git://github.com/rowrowrowrow/object-path-immutable-rowrowrowrow.git"
   },
   "types": "./object-path-immutable.d.ts",
   "engines": {

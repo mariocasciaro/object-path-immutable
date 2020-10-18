@@ -1,12 +1,13 @@
-[![build](https://img.shields.io/travis/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://travis-ci.org/mariocasciaro/object-path-immutable)
-[![coverage](https://img.shields.io/coveralls/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://coveralls.io/r/mariocasciaro/object-path-immutable)
-[![downloads](https://img.shields.io/npm/dm/object-path-immutable.svg?style=flat-square)](https://www.npmjs.com/package/object-path-immutable)
-[![version](https://img.shields.io/npm/v/object-path-immutable.svg?style=flat-square)](https://www.npmjs.com/package/object-path-immutable)
-[![deps](https://img.shields.io/david/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://david-dm.org/mariocasciaro/object-path-immutable)
-[![devdeps](https://img.shields.io/david/dev/mariocasciaro/object-path-immutable.svg?style=flat-square)](https://david-dm.org/mariocasciaro/object-path-immutable#info=devDependencies)
-
-object-path-immutable
+object-path-immutable-rowrowrowrow
 ===========
+
+This repo is based on https://github.com/mariocasciaro/object-path-immutable with added features. Namely the following:
+
+1. Get method is not imported from https://github.com/mariocasciaro/object-path.
+2. Support performing some methods recursively on all items in a deepset array.
+3. Adds an ensureExists method which does not mutate the source if the target property is set.
+
+Please checkout mariocasciaro's repo for more information.
 
 Tiny JS library to modify deep object properties without modifying the original object (immutability).
 Works great with React (especially when using `setState()`) and Redux (inside a reducer).
@@ -19,7 +20,7 @@ This can be seen as a simpler and more intuitive alternative to the *React Immut
 
 ## Install
 
-    npm install object-path-immutable --save
+    npm install object-path-immutable-rowrowrowrow --save
 
 ## Quick usage
 
@@ -204,9 +205,4 @@ const newObj = immutable.merge(obj, 'a.c', {b: 'd'})
 
 #### get (object, path, defaultValue)
 
-Retrieve a deep object property. Imported from [object-path](https://github.com/mariocasciaro/object-path) for convenience.
-
-## Equivalent library with side effects
-
-[object-path](https://github.com/mariocasciaro/object-path)
-
+Not mported from [object-path](https://github.com/mariocasciaro/object-path) so as to allow recursive get on deepset arrays.
