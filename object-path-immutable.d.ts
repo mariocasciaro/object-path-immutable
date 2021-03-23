@@ -19,6 +19,6 @@ declare module 'object-path-immutable' {
     export function del<T = object>(src: T, path?: Path): T
     export function assign<T = object>(src: T, path?: Path, source?: any): T
     export function merge<T = object>(src: T, path?: Path, source?: any): T
-    export function update<T = object>(src: T, path?: Path, updater?: (formerValue: any) => any): WrappedObject<T>
+    export function update<T = object>(src: T, path?: Path, updater?: (formerValue: any) => any): T
     export function insert<T = object>(src: T, path?: Path, value?: any, index?: number): T
 }
