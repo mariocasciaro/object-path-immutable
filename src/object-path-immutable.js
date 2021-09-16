@@ -1,4 +1,4 @@
-import isPlainObject from 'is-plain-object'
+import { isPlainObject } from 'is-plain-object'
 import op from 'object-path'
 
 var _hasOwnProperty = Object.prototype.hasOwnProperty

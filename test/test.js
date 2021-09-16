@@ -201,6 +201,11 @@ describe('set', function () {
   it('should set at a numeric path', function () {
     expect(op.set([], 0, 'yo')).to.deep.equal(['yo'])
   })
+
+  it('[security] it should not override an object\'s prototype', function () {
+    op.set({}, '__proto__.injected', 'yo')
+    expect({}.injected).to.be.undefined
+  })
 })
 
 describe('update', function () {
@@ -535,6 +540,15 @@ describe('assign', function () {
       }
     })
   })
+
+  it('[security] it should not assign object\'s prototype', function () {
+    op.set({}, 'test', {
+      __proto__: {
+        injected: true
+      }
+    })
+    expect({}.injected).to.be.undefined
+  })
 })
 
 describe('merge', function () {
@@ -648,6 +662,15 @@ describe('merge', function () {
 
     var newObj = op.wrap(obj).merge('a.c.f', { a: 1 }).value()
     expect(newObj.a.c.f).to.be.eql({ a: 1 })
+  })
+
+  it('[security] it should not merge into object\'s prototype', function () {
+    op.merge({}, 'test', {
+      __proto__: {
+        injected: true
+      }
+    })
+    expect({}.injected).to.be.undefined
   })
 })
 

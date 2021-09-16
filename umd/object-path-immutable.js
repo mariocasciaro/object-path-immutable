@@ -5,40 +5,28 @@
 }(this, (function (exports) { 'use strict';
 
   /*!
-   * isobject <https://github.com/jonschlinkert/isobject>
-   *
-   * Copyright (c) 2014-2017, Jon Schlinkert.
-   * Released under the MIT License.
-   */
-
-  function isObject(val) {
-    return val != null && typeof val === 'object' && Array.isArray(val) === false;
-  }
-
-  /*!
    * is-plain-object <https://github.com/jonschlinkert/is-plain-object>
    *
    * Copyright (c) 2014-2017, Jon Schlinkert.
    * Released under the MIT License.
    */
 
-  function isObjectObject(o) {
-    return isObject(o) === true
-      && Object.prototype.toString.call(o) === '[object Object]';
+  function isObject(o) {
+    return Object.prototype.toString.call(o) === '[object Object]';
   }
 
   function isPlainObject(o) {
     var ctor,prot;
 
-    if (isObjectObject(o) === false) return false;
+    if (isObject(o) === false) return false;
 
     // If has modified constructor
     ctor = o.constructor;
-    if (typeof ctor !== 'function') return false;
+    if (ctor === undefined) return true;
 
     // If has modified prototype
     prot = ctor.prototype;
-    if (isObjectObject(prot) === false) return false;
+    if (isObject(prot) === false) return false;
 
     // If constructor does not have an Object-specific method
     if (prot.hasOwnProperty('isPrototypeOf') === false) {
@@ -56,72 +44,73 @@
   }
 
   var objectPath = createCommonjsModule(function (module) {
-  (function (root, factory){
+  (function (root, factory) {
 
     /*istanbul ignore next:cant test*/
     {
       module.exports = factory();
     }
-  })(commonjsGlobal, function(){
+  })(commonjsGlobal, function () {
 
     var toStr = Object.prototype.toString;
-    function hasOwnProperty(obj, prop) {
-      if(obj == null) {
+
+    function hasOwnProperty (obj, prop) {
+      if (obj == null) {
         return false
       }
       //to handle objects with null prototypes (too edge case?)
       return Object.prototype.hasOwnProperty.call(obj, prop)
     }
 
-    function isEmpty(value){
+    function isEmpty (value) {
       if (!value) {
-        return true;
+        return true
       }
       if (isArray(value) && value.length === 0) {
-          return true;
+        return true
       } else if (typeof value !== 'string') {
-          for (var i in value) {
-              if (hasOwnProperty(value, i)) {
-                  return false;
-              }
+        for (var i in value) {
+          if (hasOwnProperty(value, i)) {
+            return false
           }
-          return true;
+        }
+        return true
       }
-      return false;
+      return false
     }
 
-    function toString(type){
-      return toStr.call(type);
+    function toString (type) {
+      return toStr.call(type)
     }
 
-    function isObject(obj){
-      return typeof obj === 'object' && toString(obj) === "[object Object]";
+    function isObject (obj) {
+      return typeof obj === 'object' && toString(obj) === '[object Object]'
     }
 
-    var isArray = Array.isArray || function(obj){
+    var isArray = Array.isArray || function (obj) {
       /*istanbul ignore next:cant test*/
-      return toStr.call(obj) === '[object Array]';
+      return toStr.call(obj) === '[object Array]'
     };
 
-    function isBoolean(obj){
-      return typeof obj === 'boolean' || toString(obj) === '[object Boolean]';
+    function isBoolean (obj) {
+      return typeof obj === 'boolean' || toString(obj) === '[object Boolean]'
     }
 
-    function getKey(key){
+    function getKey (key) {
       var intKey = parseInt(key);
       if (intKey.toString() === key) {
-        return intKey;
+        return intKey
       }
-      return key;
+      return key
     }
 
-    function factory(options) {
+    function factory (options) {
       options = options || {};
 
-      var objectPath = function(obj) {
-        return Object.keys(objectPath).reduce(function(proxy, prop) {
-          if(prop === 'create') {
-            return proxy;
+      var objectPath = function (obj) {
+        return Object.keys(objectPath).reduce(function (proxy, prop) {
+          if (prop === 'create') {
+            return proxy
           }
 
           /*istanbul ignore else*/
@@ -129,8 +118,8 @@
             proxy[prop] = objectPath[prop].bind(objectPath, obj);
           }
 
-          return proxy;
-        }, {});
+          return proxy
+        }, {})
       };
 
       var hasShallowProperty;
@@ -144,45 +133,60 @@
         };
       }
 
-      function getShallowProperty(obj, prop) {
+      function getShallowProperty (obj, prop) {
         if (hasShallowProperty(obj, prop)) {
-          return obj[prop];
+          return obj[prop]
         }
       }
 
-      function set(obj, path, value, doNotReplace){
+      var getShallowPropertySafely;
+      if (options.includeInheritedProps) {
+        getShallowPropertySafely = function (obj, currentPath) {
+          if (typeof currentPath !== 'string' && typeof currentPath !== 'number') {
+            currentPath = String(currentPath);
+          }
+          var currentValue = getShallowProperty(obj, currentPath);
+          if (currentPath === '__proto__' || currentPath === 'prototype' ||
+            (currentPath === 'constructor' && typeof currentValue === 'function')) {
+            throw new Error('For security reasons, object\'s magic properties cannot be set')
+          }
+          return currentValue
+        };
+      } else {
+        getShallowPropertySafely = function (obj, currentPath) {
+          return getShallowProperty(obj, currentPath)
+        };
+      }
+
+      function set (obj, path, value, doNotReplace) {
         if (typeof path === 'number') {
           path = [path];
         }
         if (!path || path.length === 0) {
-          return obj;
+          return obj
         }
         if (typeof path === 'string') {
-          return set(obj, path.split('.').map(getKey), value, doNotReplace);
+          return set(obj, path.split('.').map(getKey), value, doNotReplace)
         }
         var currentPath = path[0];
-        var currentValue = getShallowProperty(obj, currentPath);
-        if (options.includeInheritedProps && (currentPath === '__proto__' ||
-          (currentPath === 'constructor' && typeof currentValue === 'function'))) {
-          throw new Error('For security reasons, object\'s magic properties cannot be set')
-        }
+        var currentValue = getShallowPropertySafely(obj, currentPath);
         if (path.length === 1) {
           if (currentValue === void 0 || !doNotReplace) {
             obj[currentPath] = value;
           }
-          return currentValue;
+          return currentValue
         }
 
         if (currentValue === void 0) {
           //check if we assume an array
-          if(typeof path[1] === 'number') {
+          if (typeof path[1] === 'number') {
             obj[currentPath] = [];
           } else {
             obj[currentPath] = {};
           }
         }
 
-        return set(obj[currentPath], path.slice(1), value, doNotReplace);
+        return set(obj[currentPath], path.slice(1), value, doNotReplace)
       }
 
       objectPath.has = function (obj, path) {
@@ -193,32 +197,32 @@
         }
 
         if (!path || path.length === 0) {
-          return !!obj;
+          return !!obj
         }
 
         for (var i = 0; i < path.length; i++) {
           var j = getKey(path[i]);
 
-          if((typeof j === 'number' && isArray(obj) && j < obj.length) ||
+          if ((typeof j === 'number' && isArray(obj) && j < obj.length) ||
             (options.includeInheritedProps ? (j in Object(obj)) : hasOwnProperty(obj, j))) {
             obj = obj[j];
           } else {
-            return false;
+            return false
           }
         }
 
-        return true;
+        return true
       };
 
-      objectPath.ensureExists = function (obj, path, value){
-        return set(obj, path, value, true);
+      objectPath.ensureExists = function (obj, path, value) {
+        return set(obj, path, value, true)
       };
 
-      objectPath.set = function (obj, path, value, doNotReplace){
-        return set(obj, path, value, doNotReplace);
+      objectPath.set = function (obj, path, value, doNotReplace) {
+        return set(obj, path, value, doNotReplace)
       };
 
-      objectPath.insert = function (obj, path, value, at){
+      objectPath.insert = function (obj, path, value, at) {
         var arr = objectPath.get(obj, path);
         at = ~~at;
         if (!isArray(arr)) {
@@ -228,25 +232,25 @@
         arr.splice(at, 0, value);
       };
 
-      objectPath.empty = function(obj, path) {
+      objectPath.empty = function (obj, path) {
         if (isEmpty(path)) {
-          return void 0;
+          return void 0
         }
         if (obj == null) {
-          return void 0;
+          return void 0
         }
 
         var value, i;
         if (!(value = objectPath.get(obj, path))) {
-          return void 0;
+          return void 0
         }
 
         if (typeof value === 'string') {
-          return objectPath.set(obj, path, '');
+          return objectPath.set(obj, path, '')
         } else if (isBoolean(value)) {
-          return objectPath.set(obj, path, false);
+          return objectPath.set(obj, path, false)
         } else if (typeof value === 'number') {
-          return objectPath.set(obj, path, 0);
+          return objectPath.set(obj, path, 0)
         } else if (isArray(value)) {
           value.length = 0;
         } else if (isObject(value)) {
@@ -256,11 +260,11 @@
             }
           }
         } else {
-          return objectPath.set(obj, path, null);
+          return objectPath.set(obj, path, null)
         }
       };
 
-      objectPath.push = function (obj, path /*, values */){
+      objectPath.push = function (obj, path /*, values */) {
         var arr = objectPath.get(obj, path);
         if (!isArray(arr)) {
           arr = [];
@@ -275,81 +279,82 @@
 
         for (var i = 0, len = paths.length; i < len; i++) {
           if ((value = objectPath.get(obj, paths[i])) !== void 0) {
-            return value;
+            return value
           }
         }
 
-        return defaultValue;
+        return defaultValue
       };
 
-      objectPath.get = function (obj, path, defaultValue){
+      objectPath.get = function (obj, path, defaultValue) {
         if (typeof path === 'number') {
           path = [path];
         }
         if (!path || path.length === 0) {
-          return obj;
+          return obj
         }
         if (obj == null) {
-          return defaultValue;
+          return defaultValue
         }
         if (typeof path === 'string') {
-          return objectPath.get(obj, path.split('.'), defaultValue);
+          return objectPath.get(obj, path.split('.'), defaultValue)
         }
 
         var currentPath = getKey(path[0]);
-        var nextObj = getShallowProperty(obj, currentPath);
+        var nextObj = getShallowPropertySafely(obj, currentPath);
         if (nextObj === void 0) {
-          return defaultValue;
+          return defaultValue
         }
 
         if (path.length === 1) {
-          return nextObj;
+          return nextObj
         }
 
-        return objectPath.get(obj[currentPath], path.slice(1), defaultValue);
+        return objectPath.get(obj[currentPath], path.slice(1), defaultValue)
       };
 
-      objectPath.del = function del(obj, path) {
+      objectPath.del = function del (obj, path) {
         if (typeof path === 'number') {
           path = [path];
         }
 
         if (obj == null) {
-          return obj;
+          return obj
         }
 
         if (isEmpty(path)) {
-          return obj;
+          return obj
         }
-        if(typeof path === 'string') {
-          return objectPath.del(obj, path.split('.'));
+        if (typeof path === 'string') {
+          return objectPath.del(obj, path.split('.'))
         }
 
         var currentPath = getKey(path[0]);
+        getShallowPropertySafely(obj, currentPath);
         if (!hasShallowProperty(obj, currentPath)) {
-          return obj;
+          return obj
         }
 
-        if(path.length === 1) {
+        if (path.length === 1) {
           if (isArray(obj)) {
             obj.splice(currentPath, 1);
           } else {
             delete obj[currentPath];
           }
         } else {
-          return objectPath.del(obj[currentPath], path.slice(1));
+          return objectPath.del(obj[currentPath], path.slice(1))
         }
 
-        return obj;
+        return obj
       };
 
-      return objectPath;
+      return objectPath
     }
 
     var mod = factory();
     mod.create = factory;
     mod.withInheritedProps = factory({includeInheritedProps: true});
-    return mod;
+    return mod
   });
   });
 

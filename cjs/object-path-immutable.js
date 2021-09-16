@@ -2,7 +2,7 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var isPlainObject = _interopDefault(require('is-plain-object'));
+var isPlainObject = require('is-plain-object');
 var op = _interopDefault(require('object-path'));
 
 var _hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -75,7 +75,7 @@ function clone (obj, createIfEmpty, assumeArray) {
 }
 
 function _deepMerge (dest, src) {
-  if (dest !== src && isPlainObject(dest) && isPlainObject(src)) {
+  if (dest !== src && isPlainObject.isPlainObject(dest) && isPlainObject.isPlainObject(src)) {
     var merged = {};
     for (var key in dest) {
       if (_hasOwnProperty.call(dest, key)) {

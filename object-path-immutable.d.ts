@@ -13,7 +13,7 @@ interface WrappedObject<T> {
 
 declare module 'object-path-immutable' {
     export function wrap<T>(obj: T): WrappedObject<T>
-    export function get<T = object>(src: T, path?: Path, defaultValue?: any): T
+    export function get<T = object, S = any>(src: T, path?: Path, defaultValue?: S): S
     export function set<T = object>(src: T, path?: Path, value?: any): T
     export function push<T = object>(src: T, path?: Path, value?: any): T
     export function del<T = object>(src: T, path?: Path): T
